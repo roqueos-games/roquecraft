@@ -98,15 +98,19 @@ const CHUNKS_MINIMOS = 25
  * instrumentação pelo mesmo motivo que o `testTimeout` acompanha: o trabalho é o
  * mesmo, a máquina é que está 4x mais lenta.
  */
-const TETO_ASSENTAR = process.env.VITEST_INSTRUMENTADO ? 90000 : 8000
+// O runner do GitHub Actions (2 vCPU compartilhados) é máquina lenta do mesmo jeito que a
+// instrumentação: medido em 26/09/2026, no primeiro CI do repo, a janela de silêncio de 10
+// deu "assentado" com o mundo novo pela metade. Lá valem os números da máquina lenta.
+const MAQUINA_LENTA = Boolean(process.env.VITEST_INSTRUMENTADO || process.env.CI)
+const TETO_ASSENTAR = MAQUINA_LENTA ? 90000 : 8000
 // ⚠️ SILÊNCIO CURTO NÃO É FIM DE TRABALHO NUMA MÁQUINA LENTA. Meio segundo sem
 // malha nova prova pouco quando cada malha custa 4x mais: sob `--coverage` a
 // espera dava "assentado" com 5 seções no motor, e a asserção de premissa
 // (`> 10`) reprovava logo depois. A janela de silêncio acompanha o custo.
-const QUIETO_ASSENTAR = process.env.VITEST_INSTRUMENTADO ? 60 : 10
+const QUIETO_ASSENTAR = MAQUINA_LENTA ? 60 : 10
 // O prazo do teste tem que caber a espera acima com folga, senão o vermelho é
 // "timed out" em vez da mensagem que diz o que faltou assentar.
-const PRAZO = process.env.VITEST_INSTRUMENTADO ? 150000 : 20000
+const PRAZO = MAQUINA_LENTA ? 150000 : 20000
 
 async function assentar(mundo, teto = TETO_ASSENTAR) {
   const t0 = Date.now()
