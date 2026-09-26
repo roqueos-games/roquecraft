@@ -1,11 +1,18 @@
 # Roteiros de QA do RoqueCraft
 
-Os 122 arquivos desta pasta (fora este README e `lib/preparar-dist.mjs`) são os roteiros de QA,
-os geradores de asset e as ferramentas de medição que o RoqueCraft tinha em `scripts/` do
-roqueos-front, copiados do `master` `7ab22a6f` sem mudar um byte (conferido pelo hash do git). Os
-quatro arquivos de `lib/` que eles importam (`servidor-do-dist.mjs`, `rc-mirar.mjs`,
-`rc-armadilha-gl.mjs`, `qa-orientacao.mjs`) vieram de `scripts/lib/` do mesmo commit, também
-sem mudança.
+Os 122 arquivos desta pasta (fora este README, `lib/preparar-dist.mjs`, `qa-sondas.mjs` e
+`bench-mesher.mjs`) são os roteiros de QA, os geradores de asset e as ferramentas de medição que o
+RoqueCraft tinha em `scripts/` do roqueos-front, copiados do `master` `7ab22a6f` sem mudar um byte
+(conferido pelo hash do git), fora os dois consertados na 0.1.1 (abaixo). Os quatro arquivos de
+`lib/` que eles importam (`servidor-do-dist.mjs`, `rc-mirar.mjs`, `rc-armadilha-gl.mjs`,
+`qa-orientacao.mjs`) vieram de `scripts/lib/` do mesmo commit, também sem mudança.
+
+Na 0.1.1 vieram mais dois do `scripts/` do mesmo commit, com o caminho do repo:
+
+- `qa-sondas.mjs`, a varredura: roda as sondas uma a uma e grava o resultado em
+  `qa-roquecraft-varredura.json`, que a régua `test/arquitetura/sondas-varridas.spec.js` lê
+  (`node qa/qa-sondas.mjs` todas, `node qa/qa-sondas.mjs jornada porta` só as que casam).
+- `bench-mesher.mjs`, quanto custa malhar uma seção (`node qa/bench-mesher.mjs`).
 
 **Eles miram um RoqueOS rodando.** Foram escritos para o build do front (`dist/pwa`), abrem
 `/app`, esperam `window.__rosStore` e abrem a janela do jogo, que no RoqueOS de hoje fica em
@@ -53,12 +60,39 @@ anfitrião) foi medido pelo roteiro da extração, fora deste repo, contra o `ya
 As demais sondas não foram rodadas na extração. Não se sabe de motivo para as que servem
 `dist/pwa` não rodarem aqui, mas isso não foi medido.
 
+## O que rodou, em 26/09/2026 (0.1.1)
+
+As duas sondas de Node que importavam o motor pelo caminho do front, com o import consertado
+para `../src/servicos/`. Rodaram pelo `node qa/qa-sondas.mjs itens-mortos jornada`, que gravou
+as duas na varredura:
+
+| sonda                        | o que mediu                                                                         |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `qa-roquecraft-itens-mortos` | 173 itens ao alcance de 192 no catálogo, nenhum morto e nenhum dispensado à toa     |
+| `qa-roquecraft-jornada`      | os 11 elos da sobrevivência fecham (152 itens ao alcance), inclusive a muda crescer |
+
+A `itens-mortos`, com o import consertado, primeiro acusou `ender_pearl`, `ender_eye` e
+`endPortalFrame`: ela tinha ficado para trás do `test/arquitetura/itens-mortos.spec.js` no Fim
+(sem o comércio como quarta máquina e sem a dispensa da moldura do portal). Ganhou as duas
+peças do portão, com o mesmo texto; o porquê está no cabeçalho dela.
+
+## A varredura (`qa-roquecraft-varredura.json`)
+
+A régua `test/arquitetura/sondas-varridas.spec.js` roda no `yarn verificar` e cobra que toda
+sonda esteja na varredura, que nenhuma esteja vermelha e que a sonda mais velha tenha até 21
+dias. **A varredura que está aqui é a do RoqueOS**, de 18/09/2026, contra o `dist/pwa` do front,
+fora as duas linhas acima, medidas neste repo. Ela vence em 08/10/2026, às 21h51 de Brasília
+(21 dias depois da sonda mais velha, `2026-09-18T00:51Z`): daí em diante o `yarn verificar`, e o
+CI junto, reprova até alguém varrer de novo, neste repo (`node qa/lib/preparar-dist.mjs` e
+`node qa/qa-sondas.mjs`, cerca de uma hora). As sondas da lista abaixo, como estão, não medem
+este repo: numa varredura feita aqui, as quatro do caminho do front e as duas da bandeja devem
+sair vermelhas (não medido), e as duas de produção medem o RoqueOS publicado.
+
 ## O que não roda aqui
 
 - `qa-roquecraft-prod` e `qa-roquecraft-prod-mobile` miram o RoqueOS publicado.
-- `qa-roquecraft-cachoeira`, `-ceu`, `-malha`, `-mobs`, `-itens-mortos` e `-jornada` (e os
-  `.impl.mjs` deles) importam o motor pelo caminho do front (`src/services/roquecraft/...`),
-  que aqui é `src/servicos/`.
+- `qa-roquecraft-cachoeira`, `-ceu`, `-malha` e `-mobs` (e os `.impl.mjs` deles) importam ou
+  leem o motor pelo caminho do front (`src/services/roquecraft/...`), que aqui é `src/servicos/`.
 - `qa-roquecraft-dragao` e `qa-roquecraft-fortaleza` leem os avisos na bandeja do RoqueOS
   (`__rosStore.notifications`); aqui ela fica vazia, porque o host de desenvolvimento avisa no
   console. Não foram rodadas.

@@ -1,5 +1,5 @@
 {
-  "_porque": "Ver scripts/qa-sondas.mjs e tests/unit/architecture/sondas-varridas.spec.js",
+  "_porque": "Ver qa/qa-sondas.mjs e test/arquitetura/sondas-varridas.spec.js",
   "varridoEm": "2026-09-18T00:51:22.310Z",
   "totais": {
     "verde": 105,
@@ -326,13 +326,13 @@
       "estado": "verde",
       "exit": 0,
       "segundos": 0,
-      "quando": "2026-09-18T07:05:19.087Z"
+      "quando": "2026-09-26T08:11:29.626Z"
     },
     "qa-roquecraft-jornada": {
       "estado": "verde",
       "exit": 0,
       "segundos": 0,
-      "quando": "2026-09-18T01:08:32.390Z"
+      "quando": "2026-09-26T08:11:29.879Z"
     },
     "qa-roquecraft-laje": {
       "estado": "verde",

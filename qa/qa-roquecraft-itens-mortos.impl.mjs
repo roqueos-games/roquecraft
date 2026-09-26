@@ -10,14 +10,28 @@
 // mais tudo que receita e fundição produzem a partir disso. O que ficar de fora
 // é item que o jogador só vê no criativo.
 //
-//   node scripts/qa-roquecraft-itens-mortos.mjs
+//   node qa/qa-roquecraft-itens-mortos.mjs
 //
 // Sai 0 quando todo item alcançável — ou explicitamente dispensado — fecha.
-import { BLOCKS } from 'src/services/roquecraft/blocks.js'
-import { ITEMS } from 'src/services/roquecraft/items.js'
-import { RECIPES, SMELTING } from 'src/services/roquecraft/recipes.js'
-import { MOB_TYPES } from 'src/services/roquecraft/mobs.js'
-import { AGUA, FERMENTACOES } from 'src/services/roquecraft/fermentacao.js'
+//
+// Os imports eram `src/services/roquecraft/...`, o caminho do motor no RoqueOS,
+// que o Vite de lá resolvia pelo alias `src`. Aqui o motor é `src/servicos/`, e o
+// import é relativo a esta pasta (v0.1.1).
+//
+// ⚠️ E ELA TINHA FICADO PARA TRÁS DO PORTÃO. Com o import consertado ela voltou a
+// rodar e acusou três itens (`ender_pearl`, `ender_eye`, `endPortalFrame`) que o
+// `test/arquitetura/itens-mortos.spec.js` aceita. Os dois mudaram juntos no Fim
+// (Goal 21, Onda 5.1, 18/09/2026, `1a34d593` no RoqueOS): o portão ganhou a
+// quarta máquina (o aldeão vende a pérola) e a dispensa da moldura do portal; a
+// sonda não, e a varredura que a registrou verde é de antes disso. As duas
+// peças abaixo são as do portão, com o mesmo texto, para a conta voltar a ser a
+// mesma.
+import { BLOCKS } from '../src/servicos/blocks.js'
+import { ITEMS } from '../src/servicos/items.js'
+import { RECIPES, SMELTING } from '../src/servicos/recipes.js'
+import { MOB_TYPES } from '../src/servicos/mobs.js'
+import { AGUA, FERMENTACOES } from '../src/servicos/fermentacao.js'
+import { PROFISSOES } from '../src/servicos/comercio.js'
 
 const defs = Object.values(BLOCKS)
 
@@ -60,6 +74,7 @@ const DISPENSADOS = {
   bedrock: 'não se pega: é o piso do mundo',
   water: 'líquido: pega-se com balde',
   lava: 'líquido: pega-se com balde',
+  endPortalFrame: 'inquebrável: a fortaleza a produz; o item existe só no criativo',
 }
 
 const ingredientesDe = (r) =>
@@ -124,6 +139,18 @@ function alcancaveis() {
       if (tem.has(garrafa) && tem.has(ingrediente)) {
         tem.add(resultado)
         cresceu = true
+      }
+    }
+    // O comércio é a quarta máquina: o aldeão vende o que o jogador não fabrica
+    // (a pérola do Fim é o caso). Uma oferta conta quando tudo que ela cobra é
+    // alcançável — a esmeralda vem do minério. A mesma conta do portão.
+    for (const prof of Object.values(PROFISSOES)) {
+      for (const o of prof.ofertas) {
+        if (tem.has(o.recebe.item)) continue
+        if (o.paga.every((p) => tem.has(p.item))) {
+          tem.add(o.recebe.item)
+          cresceu = true
+        }
       }
     }
   }

@@ -1,0 +1,14 @@
+{
+  "porque": "O teto e o piso do mundo sao propriedades da DIMENSAO (src/servicos/dimensoes.js), nao numeros soltos. Enquanto 126/127/128 aparecerem cravados no codigo, uma dimensao de outro tamanho procura fora do mundo ou para antes do topo, em silencio. Esta lista e o que sobra, e cada item diz por que NAO e altura.",
+  "excecoes": [
+    {
+      "arquivo": "src/servicos/mesher.js",
+      "motivo": "normal de vertice empacotada em int8 com sinal: 127 e o maximo do tipo, nao um y"
+    },
+    {
+      "arquivo": "src/servicos/render/entities.js",
+      "motivo": "coordenada x em pixels dentro do canvas do rotulo, nao altura de mundo"
+    }
+  ],
+  "teto": 4
+}

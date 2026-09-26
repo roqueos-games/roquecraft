@@ -20,18 +20,22 @@
 // O QUE ELA NÃO FAZ: `ganchoDeQA`. Nada de `give`, nada de inventário semeado.
 // O gancho de E2E existe para testar UI, não para fingir progressão.
 //
-//   node scripts/qa-roquecraft-jornada.mjs
+//   node qa/qa-roquecraft-jornada.mjs
 //
 // Sai 0 quando a corrente inteira fecha. Sai 1 com a lista do que falta.
+//
+// Os imports eram `src/services/roquecraft/...`, o caminho do motor no RoqueOS,
+// que o Vite de lá resolvia pelo alias `src`. Aqui o motor é `src/servicos/`, e o
+// import é relativo a esta pasta (v0.1.1).
 // BLOCKS é indexado por ID; BLOCK_BY_KEY é o que responde por nome. A primeira
 // versão usou BLOCKS para as duas coisas e acusou `oakSapling` de não existir —
 // um falso vermelho, que é tão ruim quanto um falso verde: manda procurar
 // defeito onde não tem.
-import { BLOCKS, BLOCK_BY_KEY } from 'src/services/roquecraft/blocks.js'
-import { ITEMS } from 'src/services/roquecraft/items.js'
-import { RECIPES, SMELTING } from 'src/services/roquecraft/recipes.js'
-import { ITEM_DE_AMOR } from 'src/services/roquecraft/pecuaria.js'
-import { createSurvivalState, eat, MAX_HUNGER } from 'src/services/roquecraft/survival.js'
+import { BLOCKS, BLOCK_BY_KEY } from '../src/servicos/blocks.js'
+import { ITEMS } from '../src/servicos/items.js'
+import { RECIPES, SMELTING } from '../src/servicos/recipes.js'
+import { ITEM_DE_AMOR } from '../src/servicos/pecuaria.js'
+import { createSurvivalState, eat, MAX_HUNGER } from '../src/servicos/survival.js'
 
 const defs = Object.values(BLOCKS)
 
@@ -215,7 +219,7 @@ const elos = [
 // A pergunta certa é sobre a REGRA, e ela é exercitada de verdade: uma muda em
 // terra, com luz e céu, com o sorteio favorável, tem que virar árvore.
 try {
-  const m = await import('src/services/roquecraft/agricultura.js')
+  const m = await import('../src/servicos/agricultura.js')
   globalThis.__rcCresce = () =>
     typeof m.mudaVaiCrescer === 'function' &&
     m.mudaVaiCrescer({

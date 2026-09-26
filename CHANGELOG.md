@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.1.1 (26/09/2026)
+
+Os testes do RoqueOS que ficaram para trás na extração, e as duas sondas de QA que ainda
+importavam o motor pelo caminho do front. O jogo não muda: nada em `src/` foi tocado.
+
+- Testes que vieram do `7ab22a6f` do front, com os mesmos casos e as mesmas asserções; o que
+  mudou foi o caminho (`src/services/roquecraft/` virou `src/servicos/`, `scripts/` virou `qa/`,
+  o `ROSRoqueCraft.vue` virou `src/JogoRoqueCraft.vue`) e o que a extração já tinha trocado no
+  jogo (o texto em `i18n/*.json` e o `t` provido às telas no lugar do vue-i18n; a porta da conta
+  do save é `saveDoJogo.disponivel()`, que era o uid; quem é o jogador na sala vem da rede):
+  - `test/arquitetura/`: `itens-mortos` (7), `recorte-sem-forma` (3), `tabelas-que-se-citam`
+    (9), `altura-cravada` (13, com o `altura-cravada.json`), `lobby-i18n-por-template` (5),
+    `tela-com-foco` (5), `tela-unica` (2), `sondas-varridas` (8), `sondas-com-veredito` (5) e
+    as três das sondas da `sondas-abrem-o-jogo`;
+  - `test/composables/`: `entradaPerdeOFoco` (6), `persistenciaEstrutura` (6) e
+    `useFocoDeTela` (9);
+  - `test/multijogador/salaSimulada.spec.js` (10), com a rede simulada falando o contrato de
+    `criarSalaDoRoqueCraft` (três e quatro clientes, 150 ms, 1% e 5% de perda);
+  - `test/componentes/`: `RCStart` (6) e o spec de componente do `RCComercio` (20), ao lado do
+    que já havia.
+- Não veio a `cobertura-nao-mede-roquecraft`: ela guarda o `coverage.include` e a exclusão
+  condicional do `vitest.config.js` do front, e este repo não mede cobertura. Os seis casos do
+  `roquecraftMonta.spec.js` já estavam no `jogoRoqueCraft.spec.js` da 0.1.0 ("Do front:").
+- `qa/qa-roquecraft-itens-mortos.impl.mjs` e `qa/qa-roquecraft-jornada.impl.mjs` importam o
+  motor de `../src/servicos/` e rodam neste repo; o RoqueOS deixa de precisar da exceção
+  `AMARRAS_CONHECIDAS` presa à 0.1.0. A de itens mortos, rodando de novo, estava atrás do
+  portão desde o Fim (acusava a pérola, o olho do Fim e a moldura do portal): ganhou o comércio
+  como quarta máquina e a dispensa da moldura, com o texto do teste. As duas estão verdes na
+  varredura, medidas aqui.
+- `qa/qa-sondas.mjs` (a varredura das sondas, que grava o `qa-roquecraft-varredura.json`) e
+  `qa/bench-mesher.mjs` vieram do `scripts/` do front.
+- ⚠️ A varredura do `qa-roquecraft-varredura.json` é a do RoqueOS, de 18/09/2026, fora as duas
+  sondas acima. A `sondas-varridas` reprova quando a sonda mais velha passa de 21 dias: a partir
+  de 08/10/2026, 21h51 de Brasília, o `yarn verificar` e o CI ficam vermelhos até a varredura
+  ser refeita neste repo (ver `qa/README.md`).
+- `CONTRIBUTING.md` citava as chaves de armazenamento e os eventos de métrica do 2048, que o
+  RoqueCraft não tem; agora diz o que não se muda aqui (os nós da sala e o formato do save). O
+  comentário do `ci.yml` diz o que o pre-push roda de fato (o `roqueos-gate`, com os quatro
+  passos do `yarn verificar`).
+
 ## 0.1.0 (25/09/2026)
 
 O RoqueCraft sai do RoqueOS e fala com ele só pelo `jogo-sdk` 0.3.0.

@@ -8,9 +8,12 @@ public
 src/servicos/render/
 # Os roteiros de QA e os documentos vieram do RoqueOS sem mudança (ver qa/README.md e
 # docs/README.md). O que foi escrito neste repo (os dois README e o
-# qa/lib/preparar-dist.mjs) continua passando pelo Prettier.
+# qa/lib/preparar-dist.mjs) continua passando pelo Prettier, e também o que chegou
+# do front depois, já mexido aqui (o qa-sondas.mjs e o bench-mesher.mjs, na 0.1.1).
 qa/*
 !qa/README.md
+!qa/qa-sondas.mjs
+!qa/bench-mesher.mjs
 !qa/lib/
 qa/lib/*
 !qa/lib/preparar-dist.mjs

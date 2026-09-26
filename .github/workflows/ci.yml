@@ -3,8 +3,9 @@
 # Repo público: um PR vindo de fork precisa ser julgado por uma esteira que ele não
 # controla. Por isso este workflow roda em pull_request (NUNCA em
 # pull_request_target, que daria ao código do fork o token com escrita), não lê
-# segredo nenhum, só tem permissão de leitura e roda o mesmo `yarn verificar` do
-# pre-push.
+# segredo nenhum, só tem permissão de leitura e roda o `yarn verificar` (lint,
+# formato, testes e `jogo check`): os mesmos quatro passos que o pre-push da máquina
+# do mantenedor roda pelo `roqueos-gate`.
 name: verificar
 
 on:
