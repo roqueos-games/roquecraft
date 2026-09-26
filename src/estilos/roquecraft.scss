@@ -1,0 +1,336 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// RoqueCraft — o material da interface
+//
+// O founder pediu (2026-08-23) que os menus e o HUD pertencessem ao jogo. O que
+// estava lá era um painel de administração dark-mode: raio 12px, blur pesado,
+// ícone Material, Helvetica e o verde primário do Material Design. Os únicos
+// elementos com identidade eram os ícones de item — pixel art dos próprios
+// blocos — e era justamente isso que denunciava o resto.
+//
+// ⚠️ A IDENTIDADE VEM DE MATERIAL E FORMA, NÃO DE TIPOGRAFIA, e isso foi uma
+// decisão forçada por medição, não por gosto: o jogo está em 10 idiomas,
+// incluindo ar, hi, ja, zh e ru. Nenhuma fonte pixel (Silkscreen, Press Start
+// 2P, Departure Mono) tem esses glifos. Trocar a tipografia por pixel quebraria
+// cinco localizações — e isso não é preço de identidade, é defeito.
+//
+// Então o jogo entra na interface pelo BISEL: claro em cima e à esquerda,
+// escuro embaixo e à direita. É literalmente a mesma leitura de volume que a
+// face de um cubo tem no mundo, e é o que separa uma superfície plana de uma
+// superfície que parece um objeto.
+//
+// Global de propósito, seguindo o precedente do `--cat-*` no app.scss: os
+// componentes usam `<style scoped>`, e propriedade customizada atravessa o
+// escopo (o seletor é que não atravessa).
+//
+// Desde a saída do RoqueOS este arquivo vem com o jogo (`JogoRoqueCraft.vue`
+// importa sem `scoped`), e não mais do `app.scss` do sistema. As classes
+// `.rc-*` continuam globais, como eram; os tokens `--rc-*`, que moravam no
+// `:root` da página inteira, passam a morar na raiz do jogo: são do jogo, e
+// toda tela que os lê está dentro dela.
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ros-roquecraft {
+  // ── Paleta: derivada, não inventada ───────────────────────────────────────
+  //
+  // Cada cor sai do gerador de textura do próprio jogo
+  // (scripts/gen-roquecraft-textures.mjs) ou do tint de bioma (worldgen.js).
+  // Interface e mundo com a mesma origem é o que faz os dois parecerem a mesma
+  // coisa; um verde escolhido no olho seria só mais um verde.
+  --rc-ardosia: #3b3b42; // T.deepslate
+  --rc-pedra: #8a8a90; // T.stone
+  --rc-terra: #7a5334; // T.dirt
+  --rc-terra-funda: #4c331d; // torrão de T.dirt
+  --rc-grama: #5cb847; // tint de floresta, worldgen.js
+
+  // Superfícies, escurecendo a ardósia. Não é preto: preto puro contra um mundo
+  // colorido lê como buraco na tela.
+  // Puxadas um grau para o QUENTE. Cinza neutro puro ao lado de um mundo de
+  // terra e madeira lê como janela de outro programa; 2 pontos de vermelho no
+  // canal já bastam pra a placa parecer do mesmo lugar, sem virar marrom.
+  --rc-fundo: #1d1c1f;
+  --rc-painel: #2a2825;
+  --rc-painel-alto: #35322e;
+  --rc-recuo: #101014; // fundo de slot (o "buraco") — bem abaixo do painel,
+  // senão o buraco e a placa têm o mesmo valor e a profundidade some
+
+  --rc-texto: #f0efe8;
+  --rc-texto-2: #a8a69c;
+  --rc-texto-3: #74736c;
+
+  // ⚠️ A FACE LATERAL DA GRAMA, NÃO O TOPO. `--rc-grama` é o tint de floresta
+  // visto de cima, e em botão cheio ele fica neon contra o painel escuro.
+  // Escurecer é fiel ao mundo, não é recuo: num bloco de grama, a lateral É
+  // mais escura que o topo, porque recebe menos luz do céu.
+  --rc-acao: #4e9c3c;
+  --rc-acao-texto: #0e2408;
+  --rc-perigo: #c0392b;
+  --rc-vida: #d8443c;
+  --rc-fome: #c07a30;
+
+  // ── Bisel: a face do cubo ─────────────────────────────────────────────────
+  //
+  // Duas espessuras. 2px no HUD e no inventário, onde a linguagem é de bloco
+  // assumido; 1px nos menus, onde há texto denso e o bisel grosso vira ruído.
+  // ⚠️ VALORES SUBIRAM DEPOIS DO PRIMEIRO PRINT. Comecei em 0,22 de luz e 0,6
+  // de sombra, que é o que costuma bastar num painel de aplicativo. No jogo
+  // sumiu: o painel ficou um retângulo cinza chapado e os slots viraram
+  // quadrados escuros com um fio em volta. Bisel que não se vê não é bisel — é
+  // só custo de render. Em cima de um mundo colorido e de alto contraste, a
+  // interface precisa de mais relevo do que a intuição de UI pede.
+  --rc-luz: rgba(255, 255, 255, 0.3);
+  --rc-luz-forte: rgba(255, 255, 255, 0.46);
+  --rc-sombra: rgba(0, 0, 0, 0.5);
+  --rc-sombra-forte: rgba(0, 0, 0, 0.74);
+  --rc-linha: rgba(0, 0, 0, 0.68); // contorno externo duro
+
+  // ── Grade ─────────────────────────────────────────────────────────────────
+  //
+  // Não há escala nova aqui de propósito: `--ros-space-*` já é 4/8/12/16/20/24/32,
+  // que é exatamente a grade de 4 que um mundo de cubos pede. Criar um
+  // `--rc-u` paralelo daria dois sistemas de espaçamento no mesmo componente,
+  // e a segunda escala é sempre a que fica desatualizada.
+  --rc-raio: 2px; // menus. HUD e slot usam 0.
+
+  // Alvo de toque mínimo. 44px é o piso das diretrizes da Apple e do Material,
+  // e no celular a hotbar é o controle mais apertado do jogo.
+  --rc-toque: 44px;
+}
+
+// ── Primitivos ───────────────────────────────────────────────────────────────
+//
+// Classes globais em vez de mixins SCSS: mixin exigiria cada `<style scoped>`
+// importar o arquivo, e seis componentes importando o mesmo parcial é onde a
+// duplicação volta a entrar. Classe global atravessa escopo sem cerimônia.
+
+// SALIENTE — sai da tela. Botão, painel, chip: coisa em que se clica ou que
+// está por cima. Luz em cima e à esquerda.
+.rc-relevo {
+  border: 1px solid var(--rc-linha);
+  box-shadow:
+    inset 0 1px 0 var(--rc-luz),
+    inset 1px 0 0 var(--rc-luz),
+    inset 0 -1px 0 var(--rc-sombra),
+    inset -1px 0 0 var(--rc-sombra);
+}
+
+// SALIENTE GROSSO — a mesma leitura em 2px, pro HUD e pro inventário, onde a
+// linguagem de bloco é assumida e o elemento é pequeno.
+.rc-relevo--bloco {
+  border: 2px solid var(--rc-linha);
+  border-radius: 0;
+  box-shadow:
+    inset 0 2px 0 var(--rc-luz),
+    inset 2px 0 0 var(--rc-luz),
+    inset 0 -2px 0 var(--rc-sombra-forte),
+    inset -2px 0 0 var(--rc-sombra-forte);
+}
+
+// RECUADO — entra na tela. Slot, campo, trilho: coisa que RECEBE. A luz
+// inverte, e é essa inversão que diz "aqui cabe alguma coisa" sem uma palavra.
+.rc-recuo {
+  border: 2px solid var(--rc-linha);
+  border-radius: 0;
+  background: var(--rc-recuo);
+  box-shadow:
+    inset 0 2px 0 var(--rc-sombra-forte),
+    inset 2px 0 0 var(--rc-sombra-forte),
+    inset 0 -2px 0 var(--rc-luz),
+    inset -2px 0 0 var(--rc-luz);
+}
+
+// PAINEL — a caixa de menu. Raio 2px: o suficiente pra não cortar o dedo, longe
+// do 12px que gritava "aplicativo".
+.rc-painel {
+  background: var(--rc-painel);
+  border: 2px solid var(--rc-linha);
+  border-radius: var(--rc-raio);
+  box-shadow:
+    inset 0 2px 0 var(--rc-luz),
+    inset 2px 0 0 var(--rc-luz),
+    inset 0 -2px 0 var(--rc-sombra-forte),
+    inset -2px 0 0 var(--rc-sombra-forte),
+    0 10px 30px var(--ros-shadow-60, rgba(0, 0, 0, 0.6));
+}
+
+// BOTÃO
+.rc-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--ros-space-3, 12px);
+  width: 100%;
+  min-height: var(--rc-toque);
+  padding: var(--ros-space-3, 12px) var(--ros-space-4, 16px);
+  background: var(--rc-painel-alto);
+  color: var(--rc-texto);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  border: 1px solid var(--rc-linha);
+  border-radius: var(--rc-raio);
+  box-shadow:
+    inset 0 1px 0 var(--rc-luz),
+    inset 0 -2px 0 var(--rc-sombra);
+  cursor: pointer;
+  // 90ms: rápido o bastante pra parecer resposta do botão e não animação.
+  transition:
+    background-color 90ms linear,
+    transform 90ms linear;
+
+  &:hover:not(:disabled) {
+    background: #3a3a45;
+  }
+
+  // ⚠️ AFUNDA 1px AO APERTAR, e some com a luz de cima. É o retorno imediato
+  // que o guia de interface diegética chama de `feedback`, e num botão com
+  // bisel ele é literal: apertado, a peça deixa de estar saliente.
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 0 var(--rc-sombra-forte),
+      inset 0 -1px 0 var(--rc-luz);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  // Foco visível de teclado. Não é enfeite de acessibilidade: o menu é
+  // navegável por teclado e sem isto ninguém sabe onde está.
+  &:focus-visible {
+    outline: 2px solid var(--rc-grama);
+    outline-offset: 2px;
+  }
+}
+
+.rc-btn--acao {
+  background: var(--rc-acao);
+  color: var(--rc-acao-texto);
+  &:hover:not(:disabled) {
+    background: var(--rc-grama);
+  }
+}
+
+.rc-btn--perigo {
+  background: var(--rc-perigo);
+  color: var(--ros-text-100, rgb(255, 255, 255));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SLOT
+//
+// O buraco onde item mora. Vive aqui, no global, porque agora tem mais de um
+// dono: o inventário, a fornalha e o baú. Slot desenhado duas vezes vira slot
+// com duas aparências no primeiro ajuste que alguém esquecer de repetir.
+//
+// A gramática é a inversa da do `.rc-relevo`: sombra em cima, luz embaixo. Uma
+// peça saliente pega luz no topo; um buraco pega no fundo. É a mesma regra da
+// hotbar, e é ela que faz o inventário parecer escavado na placa em vez de
+// colado por cima dela.
+// ─────────────────────────────────────────────────────────────────────────────
+.rc-slot {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--rc-linha);
+  border-radius: 0;
+  background: var(--rc-recuo);
+  box-shadow:
+    inset 0 2px 0 var(--rc-sombra-forte),
+    inset 2px 0 0 var(--rc-sombra-forte),
+    inset 0 -2px 0 var(--rc-luz),
+    inset -2px 0 0 var(--rc-luz);
+  cursor: pointer;
+  transition: background-color var(--ros-duration-fast, 150ms);
+
+  &:hover {
+    background: #22222a;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--rc-grama);
+    outline-offset: 1px;
+  }
+  img {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+}
+
+// Contagem no canto do slot. Sombra dura, sem blur: contorno de pixel, não
+// halo — o mundo é de blocos e a sombra macia denuncia a interface de app.
+.rc-slot__n {
+  position: absolute;
+  right: 2px;
+  bottom: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ros-text-100, rgb(255, 255, 255));
+  text-shadow: 1px 1px 0 rgb(var(--ros-shadow-rgb, 0, 0, 0));
+  pointer-events: none;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BARRA DE ROLAGEM
+//
+// O RoqueOS pinta a barra de rolagem da página inteira (`scrollbars.scss`) e dá
+// as classes `ros-scrollbar-dark` e `ros-scrollbar-thin`, que o chat, a pausa,
+// o lobby e o criativo usam. Fora do RoqueOS nada disso existe e a barra caía
+// na do navegador, clara e larga em cima do painel escuro. Aqui está a mesma
+// regra, presa à raiz do jogo e lendo as mesmas propriedades (`--ros-sb-*`).
+// Nenhuma delas é DECLARADA na raiz: no RoqueOS quem declara é a janela
+// (`.ros-window__content`) e o `:root` do sistema, e declarar aqui trocaria a
+// cor que a janela dá. O valor do tema padrão entra só como recuo, na leitura.
+// ─────────────────────────────────────────────────────────────────────────────
+.ros-roquecraft {
+  .ros-scrollbar-dark {
+    --ros-sb-track: var(--ros-scrollbar-dark-track, rgba(255, 255, 255, 0.05));
+    --ros-sb-thumb: var(--ros-scrollbar-dark-thumb, rgba(255, 255, 255, 0.15));
+    --ros-sb-thumb-hover: var(--ros-scrollbar-dark-thumb-hover, rgba(255, 255, 255, 0.25));
+    --ros-sb-thumb-active: var(--ros-scrollbar-dark-thumb-active, rgba(255, 255, 255, 0.35));
+  }
+
+  .ros-scrollbar-thin {
+    --ros-sb-size: 4px;
+    --ros-sb-radius: 2px;
+  }
+}
+
+// Só com mouse ou trackpad, como no RoqueOS: no toque a barra fica a do
+// sistema, que se sobrepõe ao conteúdo em vez de pintar um risco fixo.
+@media (hover: hover) and (pointer: fine) {
+  .ros-roquecraft *::-webkit-scrollbar {
+    width: var(--ros-sb-size, 8px);
+    height: var(--ros-sb-size, 8px);
+  }
+  .ros-roquecraft *::-webkit-scrollbar-track {
+    background: var(--ros-sb-track, transparent);
+    border-radius: var(--ros-sb-radius, 4px);
+  }
+  .ros-roquecraft *::-webkit-scrollbar-thumb {
+    background: var(--ros-sb-thumb, rgba(255, 255, 255, 0.2));
+    border-radius: var(--ros-sb-radius, 4px);
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--ros-sb-thumb-hover, rgba(255, 255, 255, 0.35));
+    }
+    &:active {
+      background: var(--ros-sb-thumb-active, rgba(255, 255, 255, 0.5));
+    }
+  }
+  .ros-roquecraft *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    .ros-roquecraft * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--ros-sb-thumb, rgba(255, 255, 255, 0.2))
+        var(--ros-sb-track, transparent);
+    }
+  }
+}

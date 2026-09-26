@@ -1,0 +1,7 @@
+node_modules/
+dist/
+# Fotos e relatórios que as sondas de qa/ escrevem quando rodam (o caminho é o do
+# RoqueOS, onde elas nasceram: scripts/.qa-<sonda>/).
+scripts/.qa-*/
+.DS_Store
+*.log

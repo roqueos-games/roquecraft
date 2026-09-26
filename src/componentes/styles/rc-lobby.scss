@@ -1,0 +1,313 @@
+// Os três tokens do sistema que este arquivo lia pelo `tokens.scss` do RoqueOS,
+// que não viaja com o jogo. No RoqueOS vale o token do tema; sozinho, o valor
+// do tema padrão de hoje.
+$ros-border-soft: var(--ros-border-soft, rgba(255, 255, 255, 0.1));
+$ros-fill-05: var(--ros-fill-05, rgba(255, 255, 255, 0.05));
+$ros-fill-10: var(--ros-fill-10, rgba(255, 255, 255, 0.1));
+
+.rc-lobby {
+  // Cores de identidade deste app. Ficam aqui, e não em `tokens-root.scss`,
+  // porque são do app e não do sistema — mas ficam como custom property
+  // para que um tema consiga alcançá-las.
+  --rc-lobby-bg-1: rgba(8, 9, 12, 0.72);
+  --rc-lobby-bg-2: rgba(18, 22, 30, 0.96);
+  --rc-lobby-line-1: rgba(140, 220, 150, 0.42);
+  --rc-lobby-bg-3: rgba(60, 130, 80, 0.2);
+  --rc-lobby-bg-4: rgba(70, 150, 92, 0.3);
+  --rc-lobby-line-2: rgba(140, 220, 150, 0.7);
+  --rc-lobby-line-3: rgba(240, 120, 120, 0.4);
+  --rc-lobby-bg-5: rgba(140, 50, 50, 0.28);
+  --rc-lobby-fg-1: #ff8a80;
+  --rc-lobby-fg-2: #9fe8a8;
+  --rc-lobby-c-1: #4c9aff;
+}
+.rc-lobby {
+  position: absolute;
+  inset: 0;
+  z-index: 26;
+  display: grid;
+  place-items: center;
+  background: var(--rc-lobby-bg-1);
+  pointer-events: auto;
+
+  &__panel {
+    position: relative;
+    width: min(380px, 92%);
+    max-height: 92%;
+    overflow-y: auto;
+    padding: var(--ros-space-5, 20px);
+    border-radius: var(--rc-raio);
+    background: var(--rc-lobby-bg-2);
+    border: 1px solid $ros-border-soft;
+    box-shadow: var(--ros-shadow-modal, 0 25px 80px rgba(0, 0, 0, 0.6));
+    color: var(--ros-text-100, rgb(255, 255, 255));
+    text-align: center;
+  }
+  &__x {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: 0;
+    color: var(--ros-text-65, rgba(255, 255, 255, 0.65));
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--rc-raio);
+    &:hover {
+      background: $ros-fill-10;
+      color: var(--ros-text-100, rgb(255, 255, 255));
+    }
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ros-space-2, 8px);
+    margin: 0 0 var(--ros-space-4, 16px);
+    font-size: var(--ros-text-lg, 16px);
+    font-weight: var(--ros-font-semibold, 600);
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    gap: var(--ros-space-3, 12px);
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid var(--rc-lobby-line-1);
+    border-radius: var(--rc-raio);
+    background: var(--rc-lobby-bg-3);
+    color: var(--ros-text-100, rgb(255, 255, 255));
+    cursor: pointer;
+    text-align: left;
+    &:hover {
+      background: var(--rc-lobby-bg-4);
+    }
+    span {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    strong {
+      font-size: var(--ros-text-md, 14px);
+    }
+    small {
+      opacity: 0.7;
+      font-size: var(--ros-text-sm, 12px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__sep {
+    margin: var(--ros-space-3, 12px) 0;
+    font-size: var(--ros-text-sm, 12px);
+    opacity: 0.45;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  &__join {
+    display: flex;
+    gap: var(--ros-space-2, 8px);
+  }
+  &__input {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 13px;
+    border-radius: var(--rc-raio);
+    border: 1px solid var(--ros-line-18, rgba(255, 255, 255, 0.18));
+    background: $ros-fill-05;
+    color: var(--ros-text-100, rgb(255, 255, 255));
+    font-size: var(--ros-text-lg, 16px);
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.28em;
+    text-align: center;
+    text-transform: uppercase;
+    &:focus {
+      outline: none;
+      border-color: var(--rc-lobby-line-2);
+    }
+  }
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 15px;
+    border-radius: var(--rc-raio);
+    border: 1px solid rgba(var(--ros-white-rgb, 255, 255, 255), 0.16);
+    background: $ros-fill-05;
+    color: var(--ros-text-100, rgb(255, 255, 255));
+    font-size: var(--ros-text-sm, 12px);
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover {
+      background: var(--ros-fill-15, rgba(255, 255, 255, 0.15));
+    }
+    &--leave {
+      border-color: var(--rc-lobby-line-3);
+      background: var(--rc-lobby-bg-5);
+    }
+  }
+
+  &__hint {
+    margin: var(--ros-space-2, 8px) 0 0;
+    font-size: var(--ros-text-sm, 12px);
+    opacity: 0.6;
+    &--big {
+      font-size: var(--ros-text-md, 14px);
+      opacity: 0.85;
+      padding: var(--ros-space-4, 16px) 0;
+    }
+  }
+  &__err {
+    margin: var(--ros-space-2, 8px) 0 0;
+    color: var(--rc-lobby-fg-1);
+    font-size: var(--ros-text-sm, 12px);
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ros-space-3, 12px);
+    padding: var(--ros-space-6, 24px) 0;
+    font-size: var(--ros-text-md, 14px);
+  }
+  // O que o Quasar dava ao `q-spinner-dots color="white"`: `.q-spinner` e
+  // `.text-white`.
+  &__spinner {
+    vertical-align: middle;
+    color: #fff;
+  }
+
+  &__code {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: var(--ros-space-3, 12px);
+  }
+  &__code-label {
+    font-size: var(--ros-text-xs, 10px);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    opacity: 0.55;
+  }
+  &__code-val {
+    font-size: var(--ros-text-3xl, 24px);
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.22em;
+    color: var(--rc-lobby-fg-2);
+  }
+  &__qr {
+    width: 168px;
+    height: 168px;
+    border-radius: var(--rc-raio);
+    margin: 0 auto;
+    display: block;
+  }
+
+  &__skins {
+    margin: var(--ros-space-2, 8px) 0 var(--ros-space-3, 12px);
+  }
+  &__skins-label {
+    display: block;
+    font-size: var(--ros-text-xs, 10px);
+    opacity: 0.66;
+    margin-bottom: 6px;
+  }
+  &__skins-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  &__skin {
+    width: 34px;
+    height: 42px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--rc-raio);
+    background: $ros-fill-05;
+    cursor: pointer;
+    display: grid;
+    // cabelo / rosto / corpo empilhados: o boneco em miniatura, e o mesmo
+    // desenho de topo pra baixo que aparece no mundo
+    grid-template-rows: 7px 13px 1fr;
+    overflow: hidden;
+    transition: border-color 0.12s ease;
+    &:hover {
+      border-color: rgba(var(--ros-white-rgb, 255, 255, 255), 0.4);
+    }
+    &.is-on {
+      border-color: rgb(var(--ros-white-rgb, 255, 255, 255));
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ros-accent, var(--rc-lobby-c-1));
+      outline-offset: 2px;
+    }
+  }
+  &__skin-hair,
+  &__skin-face,
+  &__skin-body {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__players {
+    list-style: none;
+    margin: var(--ros-space-3, 12px) 0;
+    padding: 0;
+    display: grid;
+    gap: 5px;
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--ros-space-2, 8px);
+      padding: 6px 9px;
+      border-radius: var(--rc-raio);
+      background: $ros-fill-05;
+      font-size: var(--ros-text-sm, 12px);
+    }
+  }
+  &__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+  &__pname {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+  }
+  &__phealth {
+    opacity: 0.6;
+    font-family: ui-monospace, monospace;
+  }
+
+  &__row {
+    display: flex;
+    gap: var(--ros-space-2, 8px);
+    margin-top: var(--ros-space-2, 8px);
+    .rc-lobby__btn {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .rc-lobby__panel {
+    padding: var(--ros-space-4, 16px);
+    padding-bottom: calc(var(--ros-space-4, 16px) + env(safe-area-inset-bottom));
+  }
+  .rc-lobby__qr {
+    width: 140px;
+    height: 140px;
+  }
+}

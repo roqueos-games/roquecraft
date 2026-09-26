@@ -1,0 +1,648 @@
+{
+  "_porque": "Ver scripts/qa-sondas.mjs e tests/unit/architecture/sondas-varridas.spec.js",
+  "varridoEm": "2026-09-18T00:51:22.310Z",
+  "totais": {
+    "verde": 105,
+    "humana": 2
+  },
+  "sondas": {
+    "qa-roquecraft": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 167,
+      "quando": "2026-09-18T02:47:07.891Z"
+    },
+    "qa-roquecraft-agua": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 24,
+      "quando": "2026-09-18T00:51:46.173Z"
+    },
+    "qa-roquecraft-alcapao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 14,
+      "quando": "2026-09-18T05:01:36.660Z"
+    },
+    "qa-roquecraft-aldeao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 5,
+      "quando": "2026-09-18T02:35:09.592Z"
+    },
+    "qa-roquecraft-aldeia": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 15,
+      "quando": "2026-09-18T06:18:31.880Z"
+    },
+    "qa-roquecraft-amostras": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 1,
+      "quando": "2026-09-18T10:24:34.027Z"
+    },
+    "qa-roquecraft-arco": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 12,
+      "quando": "2026-09-18T07:43:51.565Z"
+    },
+    "qa-roquecraft-armadura": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 12,
+      "quando": "2026-09-18T07:11:10.599Z"
+    },
+    "qa-roquecraft-auditoria": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 65,
+      "quando": "2026-09-18T10:00:50.313Z"
+    },
+    "qa-roquecraft-cachoeira": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 25,
+      "quando": "2026-09-18T00:53:36.724Z"
+    },
+    "qa-roquecraft-cama": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 30,
+      "quando": "2026-09-18T10:01:59.864Z"
+    },
+    "qa-roquecraft-cama-forma": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 39,
+      "quando": "2026-09-18T10:25:13.288Z"
+    },
+    "qa-roquecraft-caule": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 10,
+      "quando": "2026-09-18T00:54:56.857Z"
+    },
+    "qa-roquecraft-caustica": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 19,
+      "quando": "2026-09-18T00:55:16.080Z"
+    },
+    "qa-roquecraft-cavar": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-18T00:55:24.147Z"
+    },
+    "qa-roquecraft-cerca": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 19,
+      "quando": "2026-09-18T10:02:19.243Z"
+    },
+    "qa-roquecraft-ceu": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 2,
+      "quando": "2026-09-18T00:57:24.121Z"
+    },
+    "qa-roquecraft-ceu-fotos": {
+      "estado": "humana",
+      "quando": "2026-09-18T00:51:22.310Z"
+    },
+    "qa-roquecraft-ceu-pos": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 99,
+      "quando": "2026-09-18T00:57:21.948Z"
+    },
+    "qa-roquecraft-chuva": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 41,
+      "quando": "2026-09-18T00:58:05.037Z"
+    },
+    "qa-roquecraft-cidade": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 24,
+      "quando": "2026-09-18T06:18:55.713Z"
+    },
+    "qa-roquecraft-coerencia": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-18T00:58:12.897Z"
+    },
+    "qa-roquecraft-colisao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 37,
+      "quando": "2026-09-18T00:58:49.896Z"
+    },
+    "qa-roquecraft-combate": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 11,
+      "quando": "2026-09-18T07:05:12.788Z"
+    },
+    "qa-roquecraft-console-limpo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 64,
+      "quando": "2026-09-18T02:36:27.253Z"
+    },
+    "qa-roquecraft-construcao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 38,
+      "quando": "2026-09-18T10:02:57.272Z"
+    },
+    "qa-roquecraft-construir": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 9,
+      "quando": "2026-09-18T10:03:06.611Z"
+    },
+    "qa-roquecraft-contorno": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 23,
+      "quando": "2026-09-18T01:01:04.947Z"
+    },
+    "qa-roquecraft-contorno-submerso": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 54,
+      "quando": "2026-09-18T01:00:41.795Z"
+    },
+    "qa-roquecraft-creeper": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 11,
+      "quando": "2026-09-18T10:03:17.370Z"
+    },
+    "qa-roquecraft-criativo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 14,
+      "quando": "2026-09-20T00:38:46.552Z"
+    },
+    "qa-roquecraft-dragao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 20,
+      "quando": "2026-09-18T09:46:25.400Z"
+    },
+    "qa-roquecraft-efeitos": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 29,
+      "quando": "2026-09-18T01:01:58.101Z"
+    },
+    "qa-roquecraft-encanto": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 21,
+      "quando": "2026-09-18T01:02:18.808Z"
+    },
+    "qa-roquecraft-enterrado": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 11,
+      "quando": "2026-09-19T22:33:33.645Z"
+    },
+    "qa-roquecraft-entrada": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 43,
+      "quando": "2026-09-19T22:34:16.966Z"
+    },
+    "qa-roquecraft-escada": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 48,
+      "quando": "2026-09-18T10:04:59.504Z"
+    },
+    "qa-roquecraft-escape": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 7,
+      "quando": "2026-09-18T02:37:41.660Z"
+    },
+    "qa-roquecraft-escudo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 25,
+      "quando": "2026-09-19T22:36:08.422Z"
+    },
+    "qa-roquecraft-faces": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 67,
+      "quando": "2026-09-18T10:06:06.563Z"
+    },
+    "qa-roquecraft-fim": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 17,
+      "quando": "2026-09-18T09:46:42.105Z"
+    },
+    "qa-roquecraft-flecha": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 17,
+      "quando": "2026-09-18T10:06:23.536Z"
+    },
+    "qa-roquecraft-fluxo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 17,
+      "quando": "2026-09-18T10:25:30.222Z"
+    },
+    "qa-roquecraft-forno": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 39,
+      "quando": "2026-09-18T01:06:28.591Z"
+    },
+    "qa-roquecraft-fortaleza": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 16,
+      "quando": "2026-09-18T09:46:58.352Z"
+    },
+    "qa-roquecraft-gelo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 22,
+      "quando": "2026-09-18T01:07:04.804Z"
+    },
+    "qa-roquecraft-gelo-agua": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 14,
+      "quando": "2026-09-18T01:06:42.786Z"
+    },
+    "qa-roquecraft-goal20": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 6,
+      "quando": "2026-09-18T01:07:10.421Z"
+    },
+    "qa-roquecraft-gravidade": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 20,
+      "quando": "2026-09-18T10:07:00.644Z"
+    },
+    "qa-roquecraft-halo-sombra": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 21,
+      "quando": "2026-09-18T01:07:51.565Z"
+    },
+    "qa-roquecraft-hotbar": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-18T02:37:49.405Z"
+    },
+    "qa-roquecraft-interface": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T02:38:16.308Z"
+    },
+    "qa-roquecraft-inventario": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 6,
+      "quando": "2026-09-18T07:11:16.676Z"
+    },
+    "qa-roquecraft-itens-mortos": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 0,
+      "quando": "2026-09-18T07:05:19.087Z"
+    },
+    "qa-roquecraft-jornada": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 0,
+      "quando": "2026-09-18T01:08:32.390Z"
+    },
+    "qa-roquecraft-laje": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 32,
+      "quando": "2026-09-18T01:09:04.618Z"
+    },
+    "qa-roquecraft-lava": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T01:09:31.603Z"
+    },
+    "qa-roquecraft-lavoura": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 18,
+      "quando": "2026-09-18T01:09:49.960Z"
+    },
+    "qa-roquecraft-leito": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 57,
+      "quando": "2026-09-18T10:30:15.249Z"
+    },
+    "qa-roquecraft-lentes": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 22,
+      "quando": "2026-09-18T01:11:09.155Z"
+    },
+    "qa-roquecraft-malha": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 60,
+      "quando": "2026-09-18T01:12:09.443Z"
+    },
+    "qa-roquecraft-mao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 35,
+      "quando": "2026-09-18T07:05:54.270Z"
+    },
+    "qa-roquecraft-menu-usavel": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-19T22:34:25.350Z"
+    },
+    "qa-roquecraft-minimapa": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T01:13:19.416Z"
+    },
+    "qa-roquecraft-mira": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 10,
+      "quando": "2026-09-19T23:05:26.509Z"
+    },
+    "qa-roquecraft-mobile": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 38,
+      "quando": "2026-09-18T10:27:06.005Z"
+    },
+    "qa-roquecraft-mobilia-da-sala": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 9,
+      "quando": "2026-09-18T11:28:59.591Z"
+    },
+    "qa-roquecraft-mobs": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 3,
+      "quando": "2026-09-18T05:42:22.084Z"
+    },
+    "qa-roquecraft-monta-mapa": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T10:11:26.636Z"
+    },
+    "qa-roquecraft-muda": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-18T01:16:59.223Z"
+    },
+    "qa-roquecraft-nascer": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 78,
+      "quando": "2026-09-19T22:35:43.628Z"
+    },
+    "qa-roquecraft-navegacao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 8,
+      "quando": "2026-09-20T00:38:55.064Z"
+    },
+    "qa-roquecraft-noite": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 58,
+      "quando": "2026-09-18T10:13:43.070Z"
+    },
+    "qa-roquecraft-olhar-cima": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 9,
+      "quando": "2026-09-18T10:13:52.371Z"
+    },
+    "qa-roquecraft-olho": {
+      "estado": "humana",
+      "quando": "2026-09-18T00:51:22.310Z"
+    },
+    "qa-roquecraft-onda": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 22,
+      "quando": "2026-09-18T01:19:46.614Z"
+    },
+    "qa-roquecraft-passo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 91,
+      "quando": "2026-09-18T01:21:17.282Z"
+    },
+    "qa-roquecraft-pecas": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 30,
+      "quando": "2026-09-19T21:19:15.156Z"
+    },
+    "qa-roquecraft-pecuaria": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 18,
+      "quando": "2026-09-18T01:21:35.088Z"
+    },
+    "qa-roquecraft-persistencia": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 6,
+      "quando": "2026-09-18T10:13:58.795Z"
+    },
+    "qa-roquecraft-pocao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 58,
+      "quando": "2026-09-18T08:34:42.259Z"
+    },
+    "qa-roquecraft-pocao-modificada": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 33,
+      "quando": "2026-09-18T08:33:44.171Z"
+    },
+    "qa-roquecraft-porta": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T05:42:49.559Z"
+    },
+    "qa-roquecraft-portal": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 5,
+      "quando": "2026-09-18T05:42:54.609Z"
+    },
+    "qa-roquecraft-pouso": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 24,
+      "quando": "2026-09-18T10:27:30.253Z"
+    },
+    "qa-roquecraft-prod": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 16,
+      "quando": "2026-09-18T02:43:01.496Z"
+    },
+    "qa-roquecraft-prod-mobile": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 64,
+      "quando": "2026-09-18T02:42:45.042Z"
+    },
+    "qa-roquecraft-queda": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 24,
+      "quando": "2026-09-18T01:24:52.623Z"
+    },
+    "qa-roquecraft-raio": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 22,
+      "quando": "2026-09-18T01:25:14.353Z"
+    },
+    "qa-roquecraft-redstone": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 7,
+      "quando": "2026-09-18T01:25:21.792Z"
+    },
+    "qa-roquecraft-reflexo": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 20,
+      "quando": "2026-09-18T01:25:41.856Z"
+    },
+    "qa-roquecraft-refracao": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 20,
+      "quando": "2026-09-18T01:26:02.265Z"
+    },
+    "qa-roquecraft-relogio-da-sala": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 5,
+      "quando": "2026-09-18T10:49:46.053Z"
+    },
+    "qa-roquecraft-rotina": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 52,
+      "quando": "2026-09-18T06:19:47.478Z"
+    },
+    "qa-roquecraft-sobe": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 11,
+      "quando": "2026-09-18T01:26:13.327Z"
+    },
+    "qa-roquecraft-som": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 61,
+      "quando": "2026-09-18T01:27:30.598Z"
+    },
+    "qa-roquecraft-som-arranque": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 16,
+      "quando": "2026-09-18T01:26:29.288Z"
+    },
+    "qa-roquecraft-sombra": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 10,
+      "quando": "2026-09-18T10:15:44.819Z"
+    },
+    "qa-roquecraft-sombra-baixa": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 72,
+      "quando": "2026-09-18T10:28:42.271Z"
+    },
+    "qa-roquecraft-sombra-lado": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 27,
+      "quando": "2026-09-18T01:29:09.235Z"
+    },
+    "qa-roquecraft-teleporte": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 14,
+      "quando": "2026-09-20T00:55:50.263Z"
+    },
+    "qa-roquecraft-texturas": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 13,
+      "quando": "2026-09-18T01:29:32.542Z"
+    },
+    "qa-roquecraft-tocha": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 23,
+      "quando": "2026-09-18T10:16:07.968Z"
+    },
+    "qa-roquecraft-toque": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 10,
+      "quando": "2026-09-18T02:43:11.751Z"
+    },
+    "qa-roquecraft-travessia": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 13,
+      "quando": "2026-09-18T01:30:08.488Z"
+    },
+    "qa-roquecraft-vento": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 95,
+      "quando": "2026-09-18T01:31:43.237Z"
+    },
+    "qa-roquecraft-vila": {
+      "estado": "verde",
+      "exit": 0,
+      "segundos": 40,
+      "quando": "2026-09-18T06:20:27.888Z"
+    }
+  }
+}

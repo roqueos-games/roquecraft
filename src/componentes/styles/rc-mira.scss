@@ -1,0 +1,92 @@
+// A mira e os quatro recibos de combate. Ver o cabeçalho de `RCMira.vue`.
+.rc-mira {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  // Os traços da mira: `difference` pra serem visíveis em qualquer fundo.
+  i {
+    position: absolute;
+    background: rgba(var(--ros-white-rgb, 255, 255, 255), 0.85);
+    mix-blend-mode: difference;
+    &:first-child {
+      left: 50%;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      margin-left: -1px;
+    }
+    &:last-child {
+      top: 50%;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      margin-top: -1px;
+    }
+  }
+
+  // ⚠️ AS BARRAS FICAM FORA DO `i` DE PROPÓSITO: em `difference` elas sumiriam
+  // contra o cinza médio, que é a cor de metade do cenário.
+  &__carga,
+  &__arco {
+    position: absolute;
+    left: 50%;
+    width: 26px;
+    height: 3px;
+    margin-left: -13px;
+    background: var(--ros-scrim-55, rgba(0, 0, 0, 0.55));
+    border: 1px solid rgba(var(--ros-black-rgb, 0, 0, 0), 0.7);
+    span {
+      display: block;
+      height: 100%;
+      background: rgba(var(--ros-white-rgb, 255, 255, 255), 0.9);
+    }
+  }
+  &__carga {
+    top: 13px;
+  }
+  // Acima da mira, e não abaixo: as duas barras podem estar vivas no mesmo
+  // quadro, e empilhadas no mesmo ponto viravam uma barra de dois andares sem
+  // legenda nenhuma.
+  &__arco {
+    top: -10px;
+    span {
+      background: var(--ros-roquecraft-carga-arco);
+    }
+    // Cheio é o recado que decide o tiro: a barra inteira acende.
+    &.is-cheio span {
+      background: var(--ros-roquecraft-carga-arco-cheia);
+    }
+  }
+
+  &__critico {
+    position: absolute;
+    left: 50%;
+    top: -16px;
+    transform: translateX(-50%);
+    font-style: normal;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--ros-roquecraft-fg-1);
+    text-shadow: 0 1px 0 rgba(var(--ros-black-rgb, 0, 0, 0), 0.8);
+  }
+
+  // A guarda: um arco embaixo, como a borda de cima de um escudo visto de
+  // frente. Não usa ícone porque ícone a 18 px vira borrão.
+  &__guarda {
+    position: absolute;
+    left: 50%;
+    top: 19px;
+    width: 22px;
+    height: 11px;
+    margin-left: -11px;
+    border: 2px solid var(--ros-roquecraft-guarda);
+    border-top: none;
+    border-radius: 0 0 11px 11px;
+    box-shadow: 0 1px 2px rgba(var(--ros-black-rgb, 0, 0, 0), 0.7);
+  }
+}

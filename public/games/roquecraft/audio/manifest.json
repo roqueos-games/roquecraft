@@ -1,0 +1,124 @@
+{
+  "versao": 2,
+  "grupos": {
+    "passo.grama": [
+      "p-grama-0.ogg",
+      "p-grama-1.ogg",
+      "p-grama-2.ogg",
+      "p-grama-3.ogg",
+      "p-grama-4.ogg"
+    ],
+    "passo.neve": ["p-neve-0.ogg", "p-neve-1.ogg", "p-neve-2.ogg", "p-neve-3.ogg", "p-neve-4.ogg"],
+    "passo.madeira": [
+      "p-madeira-0.ogg",
+      "p-madeira-1.ogg",
+      "p-madeira-2.ogg",
+      "p-madeira-3.ogg",
+      "p-madeira-4.ogg"
+    ],
+    "passo.pedra": [
+      "p-pedra-0.ogg",
+      "p-pedra-1.ogg",
+      "p-pedra-2.ogg",
+      "p-pedra-3.ogg",
+      "p-pedra-4.ogg"
+    ],
+    "passo.areia": [
+      "p-areia-0.ogg",
+      "p-areia-1.ogg",
+      "p-areia-2.ogg",
+      "p-areia-3.ogg",
+      "p-areia-4.ogg",
+      "p-areia-5.ogg"
+    ],
+    "passo.cascalho": [
+      "p-cascalho-0.ogg",
+      "p-cascalho-1.ogg",
+      "p-cascalho-2.ogg",
+      "p-cascalho-3.ogg"
+    ],
+    "passo.folhas": ["p-folhas-0.ogg", "p-folhas-1.ogg"],
+    "passo.terra": ["p-terra-0.ogg", "p-terra-1.ogg", "p-terra-2.ogg", "p-terra-3.ogg"],
+    "bate.picareta": [
+      "f-picareta-0.ogg",
+      "f-picareta-1.ogg",
+      "f-picareta-2.ogg",
+      "f-picareta-3.ogg",
+      "f-picareta-4.ogg"
+    ],
+    "bate.machado": ["f-machado-0.ogg", "f-machado-1.ogg", "f-machado-2.ogg", "f-machado-3.ogg"],
+    "bate.pa": ["f-pa-0.ogg", "f-pa-1.ogg", "f-pa-2.ogg", "f-pa-3.ogg"],
+    "bate.mao": ["f-mao-0.ogg", "f-mao-1.ogg", "f-mao-2.ogg", "f-mao-3.ogg"],
+    "quebra.pedra": ["q-pedra-0.ogg", "q-pedra-1.ogg", "q-pedra-2.ogg", "q-pedra-3.ogg"],
+    "quebra.madeira": ["q-madeira-0.ogg", "q-madeira-1.ogg", "q-madeira-2.ogg"],
+    "quebra.vidro": ["q-vidro-0.ogg", "q-vidro-1.ogg", "q-vidro-2.ogg"],
+    "quebra.metal": ["q-metal-0.ogg", "q-metal-1.ogg", "q-metal-2.ogg"],
+    "quebra.macio": ["q-macio-0.ogg", "q-macio-1.ogg", "q-macio-2.ogg"],
+    "agua.mergulho": [
+      "a-mergulho-0.ogg",
+      "a-mergulho-1.ogg",
+      "a-mergulho-2.ogg",
+      "a-mergulho-3.ogg"
+    ],
+    "agua.bracada": ["a-bracada-0.ogg", "a-bracada-1.ogg", "a-bracada-2.ogg", "a-bracada-3.ogg"],
+    "agua.bolha": ["a-bolha-0.ogg", "a-bolha-1.ogg", "a-bolha-2.ogg"],
+    "amb.vento": ["amb-vento.ogg"],
+    "amb.chuva": ["amb-chuva.ogg"],
+    "amb.passaros": ["amb-passaros.ogg"],
+    "amb.grilos": ["amb-grilos.ogg"],
+    "amb.ondas": ["amb-ondas.ogg"],
+    "amb.caverna": ["amb-caverna.ogg"],
+    "amb.submerso": ["amb-submerso.ogg"],
+    "amb.cachoeira": ["amb-cachoeira.ogg"]
+  },
+  "licenca": "CC0-1.0",
+  "creditos": "Kenney (www.kenney.nl) + OpenGameArt — ver CREDITOS.md",
+  "musica": {
+    "dia": [
+      {
+        "arq": "m-dia-0.mp3",
+        "dur": 131.72
+      },
+      {
+        "arq": "m-dia-1.mp3",
+        "dur": 24.89
+      },
+      {
+        "arq": "m-dia-2.mp3",
+        "dur": 22.0
+      }
+    ],
+    "noite": [
+      {
+        "arq": "m-noite-0.mp3",
+        "dur": 32.05
+      },
+      {
+        "arq": "m-noite-1.mp3",
+        "dur": 183.04
+      }
+    ],
+    "tensao": [
+      {
+        "arq": "m-tensao-0.mp3",
+        "dur": 58.46
+      }
+    ],
+    "morte": [
+      {
+        "arq": "m-morte-0.mp3",
+        "dur": 49.29
+      }
+    ],
+    "menu": [
+      {
+        "arq": "m-dia-2.mp3",
+        "dur": 22.0
+      },
+      {
+        "arq": "m-dia-0.mp3",
+        "dur": 131.72
+      }
+    ]
+  }
+}

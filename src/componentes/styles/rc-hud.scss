@@ -1,0 +1,388 @@
+.rc-hud {
+  // Cores de identidade deste app. Ficam aqui, e não em `tokens-root.scss`,
+  // porque são do app e não do sistema — mas ficam como custom property
+  // para que um tema consiga alcançá-las.
+  --rc-hud-bg-1: rgba(22, 22, 26, 0.82);
+  --rc-hud-bg-2: rgba(38, 92, 32, 0.85);
+  --rc-hud-bg-3: #ff6b6b;
+  --rc-hud-bg-4: #e03131;
+  --rc-hud-bg-5: rgba(20, 8, 8, 0.62);
+  --rc-hud-bg-6: #d99a3f;
+  --rc-hud-bg-7: rgba(24, 16, 6, 0.62);
+  --rc-hud-bg-8: #57b7f0;
+  --rc-hud-bg-9: rgba(10, 24, 34, 0.55);
+  --rc-hud-bg-10: rgba(30, 30, 35, 0.86);
+  --rc-hud-shadow-1: rgba(0, 0, 0, 0.55);
+  --rc-hud-bg-11: #e04b3f;
+  --rc-hud-bg-12: #d9c23f;
+  --rc-hud-bg-13: #5ad06a;
+  --rc-hud-bg-14: rgba(22, 22, 26, 0.86);
+  // a armadura: aço claro cheio, aço apagado vazio
+  --rc-hud-armadura: #c9d3dc;
+  --rc-hud-armadura-vazia: rgba(30, 34, 40, 0.6);
+}
+.rc-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  color: var(--ros-text-100, rgb(255, 255, 255));
+  text-shadow: 0 1px 3px rgba(var(--ros-black-rgb, 0, 0, 0), 0.85);
+
+  &__top {
+    position: absolute;
+    top: calc(var(--ros-space-3, 12px) + env(safe-area-inset-top));
+    left: calc(var(--ros-space-3, 12px) + env(safe-area-inset-left));
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ros-space-2, 8px);
+    max-width: calc(100% - var(--ros-space-6, 24px));
+  }
+
+  // ⚠️ CHIP SEM RAIO E SEM BLUR. Eram 6px de canto e `blur(6px)`: as duas
+  // assinaturas de barra de status de celular. O que substitui é uma PLAQUETA —
+  // canto duro, fundo opaco, bisel de 1px. Lê como algo pregado na tela, que é
+  // o que uma leitura de coordenada deveria parecer num jogo de blocos.
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 0;
+    background: var(--rc-hud-bg-1);
+    border: 1px solid var(--rc-linha);
+    box-shadow:
+      inset 0 1px 0 var(--rc-luz),
+      inset 0 -1px 0 var(--rc-sombra);
+    font-size: var(--ros-text-sm, 12px);
+    font-weight: var(--ros-font-semibold, 600);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 46vw;
+
+    &--mp {
+      pointer-events: auto;
+      cursor: pointer;
+      background: var(--rc-hud-bg-2);
+      color: var(--rc-texto);
+    }
+    &--stats {
+      opacity: 0.75;
+    }
+  }
+
+  &__vitals {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+  }
+
+  &__bar {
+    display: flex;
+    gap: 2px;
+  }
+
+  &__pip {
+    width: 13px;
+    height: 12px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: drop-shadow(0 1px 2px rgba(var(--ros-black-rgb, 0, 0, 0), 0.7));
+
+    &--heart {
+      // coração desenhado em CSS (sem asset, sem risco de IP)
+      background: radial-gradient(circle at 30% 32%, var(--rc-hud-bg-3) 0 42%, transparent 43%),
+        radial-gradient(circle at 70% 32%, var(--rc-hud-bg-3) 0 42%, transparent 43%);
+      clip-path: polygon(50% 100%, 0% 38%, 8% 12%, 30% 4%, 50% 20%, 70% 4%, 92% 12%, 100% 38%);
+      background-color: var(--rc-hud-bg-4);
+      &.is-half {
+        background: linear-gradient(90deg, var(--rc-hud-bg-4) 0 50%, var(--rc-hud-bg-5) 50%);
+      }
+      &.is-empty {
+        background: var(--rc-hud-bg-5);
+      }
+    }
+
+    &--food {
+      background-color: var(--rc-hud-bg-6);
+      clip-path: polygon(18% 100%, 6% 60%, 14% 22%, 40% 6%, 62% 10%, 88% 30%, 94% 66%, 76% 100%);
+      &.is-half {
+        background: linear-gradient(90deg, var(--rc-hud-bg-6) 0 50%, var(--rc-hud-bg-7) 50%);
+      }
+      &.is-empty {
+        background: var(--rc-hud-bg-7);
+      }
+    }
+
+    &--armadura {
+      // um peitoral chapado: ombros largos, cintura estreita
+      background-color: var(--rc-hud-armadura);
+      clip-path: polygon(
+        0% 10%,
+        30% 0%,
+        50% 12%,
+        70% 0%,
+        100% 10%,
+        92% 55%,
+        78% 100%,
+        22% 100%,
+        8% 55%
+      );
+      &.is-half {
+        background: linear-gradient(
+          90deg,
+          var(--rc-hud-armadura) 0 50%,
+          var(--rc-hud-armadura-vazia) 50%
+        );
+      }
+      &.is-empty {
+        background: var(--rc-hud-armadura-vazia);
+      }
+    }
+
+    &--air {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--rc-hud-bg-8);
+      &.is-empty {
+        background: var(--rc-hud-bg-9);
+      }
+    }
+  }
+
+  &__xp {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(72px + env(safe-area-inset-bottom));
+    width: min(360px, 62vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  // Trilho recuado, barra saliente: a mesma gramática do slot.
+  &__xp-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 0;
+    background: var(--rc-recuo);
+    border: 1px solid var(--rc-linha);
+    box-shadow: inset 0 1px 0 var(--rc-sombra-forte);
+    overflow: hidden;
+  }
+  &__xp-fill {
+    height: 100%;
+    background: var(--rc-grama);
+    box-shadow: inset 0 1px 0 var(--rc-luz-forte);
+    transition: width var(--ros-duration-fast, 150ms) linear;
+  }
+  &__xp-level {
+    position: absolute;
+    font-size: var(--ros-text-sm, 12px);
+    font-weight: var(--ros-font-bold, 700);
+    color: var(--rc-grama);
+    top: -16px;
+  }
+
+  // A hotbar é a MOLDURA e os slots são os buracos nela. Canto duro, bisel
+  // saliente de 2px: a barra inteira lê como uma peça apoiada na tela.
+  &__hotbar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--ros-space-3, 12px) + env(safe-area-inset-bottom));
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 0;
+    background: var(--rc-hud-bg-10);
+    border: 2px solid var(--rc-linha);
+    box-shadow:
+      inset 0 2px 0 var(--rc-luz),
+      inset 2px 0 0 var(--rc-luz),
+      inset 0 -2px 0 var(--rc-sombra-forte),
+      inset -2px 0 0 var(--rc-sombra-forte);
+    pointer-events: auto;
+  }
+
+  // ⚠️ SLOT É BURACO, NÃO BOTÃO — e a inversão do bisel é o que diz isso.
+  // Luz embaixo e sombra em cima é como o olho lê uma cavidade; era o
+  // contrário, e por isso os nove slots pareciam nove botões iguais.
+  &__slot {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border: 2px solid var(--rc-linha);
+    border-radius: 0;
+    background: var(--rc-recuo);
+    box-shadow:
+      inset 0 2px 0 var(--rc-sombra-forte),
+      inset 2px 0 0 var(--rc-sombra-forte),
+      inset 0 -2px 0 var(--rc-luz),
+      inset -2px 0 0 var(--rc-luz);
+    cursor: pointer;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    transition:
+      background-color var(--ros-duration-fast, 150ms),
+      transform var(--ros-duration-fast, 150ms);
+
+    // O escolhido SOBE e inverte o bisel: deixa de ser buraco e vira peça. É a
+    // mesma diferença que o jogador vê entre um bloco no chão e um na mão.
+    &.is-selected {
+      background: var(--rc-painel-alto);
+      transform: translateY(-3px);
+      box-shadow:
+        inset 0 2px 0 var(--rc-luz-forte),
+        inset 2px 0 0 var(--rc-luz-forte),
+        inset 0 -2px 0 var(--rc-sombra-forte),
+        inset -2px 0 0 var(--rc-sombra-forte),
+        0 4px 10px var(--rc-hud-shadow-1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--rc-grama);
+      outline-offset: 1px;
+    }
+
+    img {
+      width: 34px;
+      height: 34px;
+      image-rendering: pixelated;
+      pointer-events: none;
+    }
+  }
+
+  &__slot-count {
+    position: absolute;
+    right: 3px;
+    bottom: 1px;
+    font-size: var(--ros-text-sm, 12px);
+    font-weight: var(--ros-font-bold, 700);
+  }
+  &__slot-key {
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    font-size: var(--ros-text-xs, 10px);
+    opacity: 0.55;
+  }
+  &__slot-dur {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 3px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(var(--ros-black-rgb, 0, 0, 0), 0.6);
+    overflow: hidden;
+    i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        var(--rc-hud-bg-11),
+        var(--rc-hud-bg-12) 45%,
+        var(--rc-hud-bg-13)
+      );
+    }
+  }
+
+  &__item-toast {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(140px + env(safe-area-inset-bottom));
+    padding: 5px 14px;
+    border-radius: 0;
+    background: var(--rc-hud-bg-14);
+    border: 1px solid var(--rc-linha);
+    box-shadow:
+      inset 0 1px 0 var(--rc-luz),
+      inset 0 -1px 0 var(--rc-sombra);
+    font-size: var(--ros-text-md, 14px);
+    font-weight: var(--ros-font-semibold, 600);
+  }
+
+  // Mesmo desenho do recado de item, mais alto na tela: os dois podem coincidir
+  // no tempo (trocar de slot no mesmo segundo em que a cama responde) e
+  // empilhados eles se leem; sobrepostos, nenhum dos dois se lê.
+  &__bed-toast {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(184px + env(safe-area-inset-bottom));
+    padding: 5px 14px;
+    background: var(--rc-hud-bg-14);
+    border: 1px solid var(--rc-linha);
+    box-shadow:
+      inset 0 1px 0 var(--rc-luz),
+      inset 0 -1px 0 var(--rc-sombra);
+    font-size: var(--ros-text-md, 14px);
+    font-weight: var(--ros-font-semibold, 600);
+  }
+
+  &--mobile {
+    // ⚠️ 40 DE LARGURA, 44 DE ALTURA. O piso de alvo de toque é 44px, e a
+    // largura não alcança: nove slots a 44 dariam 396px numa tela de 390. As
+    // saídas seriam esconder slot ou fazer a barra rolar, e as duas custam mais
+    // do que 4px de largura. A ALTURA não tem essa desculpa — sobra tela
+    // vertical — então ela vai pros 44 e o alvo fica conforme no eixo que dá.
+    .rc-hud__slot {
+      width: 40px;
+      height: 44px;
+      img {
+        width: 29px;
+        height: 29px;
+      }
+    }
+    .rc-hud__vitals {
+      bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+    // Os tres botoes do RCMobile ancoram na direita do MESMO topo. Sem reservar
+    // a faixa deles, o chip de bioma passava POR BAIXO do botao e o nome saia
+    // cortado em "ns" (QA mobile de 2026-08-19).
+    .rc-hud__top {
+      max-width: calc(100% - 150px - env(safe-area-inset-right));
+    }
+  }
+}
+
+.rc-fade-enter-active,
+.rc-fade-leave-active {
+  transition: opacity var(--ros-duration-normal, 250ms);
+}
+.rc-fade-enter-from,
+.rc-fade-leave-to {
+  opacity: 0;
+}
+
+// A MARCA DO BORRIFO no slot. Ver o comentário em `RCHud.vue`: a poção de
+// arremesso era pixel por pixel igual à de beber, e arte nova está congelada.
+// O risco na diagonal do canto superior esquerdo é o gesto de arremessar, e o
+// canto está livre — contagem fica embaixo à direita, durabilidade na base.
+.rc-hud__slot-splash {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  background: linear-gradient(
+    45deg,
+    transparent 0 38%,
+    rgba(var(--ros-black-rgb, 0, 0, 0), 0.85) 38% 46%,
+    var(--ros-roquecraft-borrifo) 46% 62%,
+    rgba(var(--ros-black-rgb, 0, 0, 0), 0.85) 62% 70%,
+    transparent 70% 100%
+  );
+}

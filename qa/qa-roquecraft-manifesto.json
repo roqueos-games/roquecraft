@@ -1,0 +1,10 @@
+{
+  "_porque": "Ver tests/unit/architecture/sondas-com-veredito.spec.js",
+  "mostra": [
+    "qa-roquecraft-olho.mjs",
+    "qa-roquecraft-ceu-fotos.mjs",
+    "qa-roquecraft-ceu-pos.mjs",
+    "qa-roquecraft-mao.mjs"
+  ],
+  "semVeredito": ["qa-roquecraft.mjs"]
+}

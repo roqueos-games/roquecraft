@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>RoqueCraft · desenvolvimento</title>
+    <style>
+      html,
+      body,
+      #jogo {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #080b16;
+      }
+      /* O corpo que o RoqueOS (com o Quasar) dá à página. Dentro dele o jogo herda isto;
+         sozinho, sem isto, o HUD cai na serifada do navegador e o texto sobe uns 20 px. */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto,
+          sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="jogo"></div>
+    <script type="module" src="/dev/main.js"></script>
+  </body>
+</html>

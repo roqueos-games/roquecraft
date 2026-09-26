@@ -1,0 +1,55 @@
+{
+  "id": "roquecraft",
+  "slug": "roquecraft",
+  "versaoDoContrato": 1,
+  "nome": {
+    "pt-BR": "RoqueCraft",
+    "en-US": "RoqueCraft",
+    "es-ES": "RoqueCraft",
+    "fr-FR": "RoqueCraft",
+    "de-DE": "RoqueCraft",
+    "ja-JP": "RoqueCraft",
+    "zh-CN": "RoqueCraft",
+    "hi-IN": "RoqueCraft",
+    "ru-RU": "RoqueCraft",
+    "ar-AR": "RoqueCraft"
+  },
+  "descricao": {
+    "pt-BR": "Mundo de blocos infinito: explore biomas, minere, construa e sobreviva - sozinho ou online com amigos.",
+    "en-US": "Infinite block world: explore biomes, mine, build and survive - solo or online with friends.",
+    "es-ES": "Mundo de bloques infinito: explora biomas, mina, construye y sobrevive, solo o en línea con amigos.",
+    "fr-FR": "Monde de blocs infini : explorez des biomes, minez, construisez et survivez, seul ou en ligne entre amis.",
+    "de-DE": "Unendliche Blockwelt: Biome erkunden, abbauen, bauen und überleben - allein oder online mit Freunden.",
+    "ja-JP": "無限のブロックワールド：バイオームを探索し、採掘し、建築し、生き延びよう。ひとりでも、友達とオンラインでも。",
+    "zh-CN": "无限方块世界：探索生物群系，挖矿、建造、生存 —— 单人或与好友联机。",
+    "hi-IN": "अनंत ब्लॉक दुनिया: बायोम खोजें, खनन करें, बनाएँ और जीवित रहें — अकेले या दोस्तों के साथ ऑनलाइन।",
+    "ru-RU": "Бесконечный мир из блоков: исследуйте биомы, добывайте, стройте и выживайте — в одиночку или онлайн с друзьями.",
+    "ar-AR": "عالم مكعبات لا نهائي: استكشف الأحياء الحيوية، وعدّن، وابنِ، وانجُ — بمفردك أو عبر الإنترنت مع الأصدقاء."
+  },
+  "seo": {
+    "pt-BR": {
+      "resumo": "Jogo de blocos grátis no navegador, sem baixar nada: mundo infinito, mineração, construção e sobrevivência em 3D.",
+      "sobre": "RoqueCraft é um mundo de voxel infinito gerado por semente: biomas, cavernas, minério, ciclo de dia e noite, fome e vida. Você mina, fabrica e constrói — e pode abrir uma sala e chamar alguém para o mesmo mundo. Roda no navegador, sem instalar nada.",
+      "comoJogar": "WASD para andar, espaço para pular, botão esquerdo quebra e direito coloca. E para o inventário, F5 troca a câmera. No modo criativo, dois toques no espaço para voar."
+    },
+    "en-US": {
+      "resumo": "Free block-building game in your browser, no download: an infinite world, mining, crafting and survival in 3D.",
+      "sobre": "RoqueCraft is an infinite voxel world grown from a seed: biomes, caves, ore, a day-night cycle, hunger and health. You mine, craft and build — and you can open a room and pull someone into the same world. Runs in the browser, nothing to install.",
+      "comoJogar": "WASD to move, space to jump, left button breaks and right places. E for inventory, F5 changes the camera. In creative, double-tap space to fly."
+    }
+  },
+  "etiquetas": ["3d", "Sandbox", "Survival", "Multiplayer"],
+  "capa": "public/capa.jpg",
+  "icone": "public/icone.svg",
+  "brilho": "rgba(90, 167, 64, 0.5)",
+  "janela": {
+    "largura": 1024,
+    "altura": 680,
+    "minLargura": 480,
+    "minAltura": 400
+  },
+  "aceitaConvite": true,
+  "entraNoPodio": false,
+  "recorde": null,
+  "capacidades": ["salaAoVivo", "progresso"]
+}

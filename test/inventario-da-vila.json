@@ -1,0 +1,87 @@
+{
+  "_porque": "Uma vila 'mais bonita' é opinião até alguém contar o que ela tem. Esta é a conta, e ela só SOBE: onda que não aumenta nenhum número não entregou nada, e o teste diz isso em vez de a gente discutir foto. Os valores de 14/09/2026 são a vila ANTES do Goal 19 — cinco caixas de sete lados, caminho de podzol, e nada mais. A partir de 14/09/2026 os números são a MEDIANA de doze vilas, não uma: medir uma só torna a régua refém da grade — quando a célula encolheu de 24 para 16 chunks, a vila da célula (0,0) virou outra e a catraca acusou queda sobre uma entrega que não piorou.",
+  "medidoEm": "2026-09-14",
+  "semente": 1337,
+  "minimos": {
+    "colunasDaVila": 2681,
+    "blocosSolidos": 4472,
+    "tiposDeBloco": 35,
+    "fontesDeLuz": 13,
+    "moveis": 37,
+    "vidros": 58,
+    "alturaAcimaDoChao": 11,
+    "estruturas": 7
+  },
+  "historico": [
+    {
+      "data": "2026-09-14",
+      "nota": "antes do Goal 19: 413 colunas, 1.008 blocos sólidos em QUATRO tipos (cobblestone 245, oakPlanks 580, glass 15, podzol 168), nenhuma fonte de luz, nenhum móvel, e 4 blocos de altura — cinco caixas de sete lados com telhado plano"
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 1: a casa deixou de ser caixa. 510 colunas, 1.345 blocos em NOVE tipos (oakPlanks 508, oakStairsNz 156, oakStairsPz 156, oakLog 123, cobblestone 203, glass 30, bed+bedHeadPz 10, podzol 159), 10 móveis (cinco camas de duas metades), 30 janelas e 10 de altura. Telhado de duas águas com beiral, empena fechada, viga de canto, batente de porta, quatro plantas e material por bioma."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 2: a vila virou lugar. 2.311 colunas (o quintal entra na conta: coluna da vila sem construção, que é o que impede árvore entre as casas), 2.893 blocos em TREZE tipos, 13 lanternas (4 nas quinas da praça e uma por varanda), 18 móveis, 60 janelas. Praça de pedregulho de 15 de lado com poço de água cercada e cobertura de laje; densidade passou de 5 casas fixas para 7 a 9 colocadas por rejeição."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 3: trabalho e comida. 2.844 colunas, 3.330 blocos em TRINTA E CINCO tipos, 37 móveis (cama, bancada em toda casa, e o bloco de ofício de cada profissão: fornalha, estante, alambique, baú). Duas leiras irrigadas com canal de água fechado, trigo em estágios diferentes, cerca ligada e portão; um curral com cocho e rebanho posto pela ESTRUTURA. E a varredura desta régua foi corrigida: ela usava RAIO em vez de RAIO_ESCRITO e vinha subcontando a borda da vila desde a onda 0 — via um portão de roça de três."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 4: o castelo. Muralha de 29 de lado com ameia e adarve, quatro torres de quina, portão em arco, pátio, e torre de menagem de 16 de altura com espiral de escada encostada na parede e baú no último andar. Hierarquia de alturas 7/12/16 — a primeira tentativa foi 6/11/13 e na foto as torres sumiam contra o muro."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 5: a ruína, que é o MESMO castelo erodido e não outro gerador — 42% deles. Erosão por célula (x,y,z) subindo com a altura, musgo em metade do pedregulho, uma das quatro torres cortada pela metade, e sem terreiro: o mato encosta na muralha."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 6: a vila assenta no relevo. O founder viu na tela: 'às vezes as casas da vila ficam cortadas pela metade'. Dois defeitos somados — os cinco pontos de medição olhavam um quadrado de raio 24 sobre uma vila que escreve até 35 e não viam nada entre os cantos (achamos +6 sob uma casa com o limite escrito em 3), e o terreiro devolvia lista vazia, deixando a lomba de pé encostada na parede. Agora são 49 pontos sobre a área real, o chão é a MEDIANA com 85% dentro de ±3 e teto de 7, e o terreiro TERRACEIA. Blocos sólidos sobem de 3.330 para 4.775 porque o aterro entra na conta."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 7: o castelo gótico. O founder chamou o anterior de 'extremamente simplório', e o diagnóstico é preciso: ele tinha a PLANTA de um castelo e nenhuma das coisas que fazem o olho dizer gótico. Entraram as três que fazem — verticalidade (hierarquia 8/18/28 mais agulha), arco ogival (portão, janelão, campanário) e contraforte — mais rosácea, rastrilho, mata-cães, embasamento de pedra bruta, escada de acesso ao adarve e bandeiras. De 2.961 para 6.946 blocos, de 8 para 22 tipos, de 17 para 32 de altura."
+    },
+    {
+      "data": "2026-09-14",
+      "nota": "onda 8: a vila deixou de ser rara. O founder voou o mapa inteiro e não achou nenhuma, e a medição concordou: 2.431 blocos entre vizinhas. A célula da grade caiu de 24 para 16 chunks (o piso é 16: com 14 sobram duas posições para o centro e as vilas nascem alinhadas numa grade visível) e a floresta entrou na lista de biomas. Medido: 1 vila a cada 1.095 blocos. A lista de biomas, que estava copiada em três arquivos, virou BIOMAS_DA_ALDEIA num lugar só. E os números passaram a ser a mediana de doze vilas em vez de uma."
+    }
+  ],
+  "castelo": {
+    "_porque": "Mesma catraca da vila, e pelo mesmo motivo: sem número, 'o castelo está melhor' é opinião. Ele só sobe. A frequência entra aqui porque ela é uma DECISÃO e não um efeito colateral: castelo em toda célula é cenário de parque.",
+    "minimos": {
+      "colunas": 2209,
+      "blocosSolidos": 6946,
+      "tiposDeBloco": 22,
+      "alturaAcimaDoChao": 32
+    },
+    "frequencia": {
+      "de": 200,
+      "tem": 70,
+      "nota": "nem toda célula tem castelo, de propósito: ele precisa ser a coisa que o jogador conta para alguém ter achado"
+    },
+    "ruina": {
+      "_porque": "A ruína não tem catraca de número, e é de propósito: ela PERDE blocos por definição, então um piso mínimo empurraria a erosão para baixo a cada rodada até ela sumir. A régua dela é uma FAIXA de perda, cobrada em castelo.spec.js — pouco demais é castelo sujo, muito demais é entulho.",
+      "faixaDePerda": [0.1, 0.55],
+      "nota": "medida em 14/09/2026: a erosão vai de 0% no piso (que não erode) a 81% no topo da menagem"
+    }
+  },
+  "densidade": {
+    "_porque": "O founder voou o mapa inteiro e não achou uma vila. A distância entre vizinhas é uma DECISÃO de produto e precisava de mecanismo: sem teste, ela voltaria a subir na primeira vez que alguém apertasse o critério de terreno sem medir o efeito. A faixa é estreita o bastante para separar a configuração escolhida (1.183, com floresta) da mais pobre que ainda seria jogável (1.517, só planície) — uma faixa que aceita as duas não decide nada. Medido numa varredura de 33×33 células, que é onde a medida para de oscilar com a borda da amostra.",
+    "vilaACada": {
+      "medido": 1183,
+      "min": 700,
+      "max": 1400,
+      "varredura": "33x33 celulas"
+    },
+    "castelosACada": {
+      "medido": 1411,
+      "min": 900,
+      "max": 2600,
+      "varredura": "17x17 celulas"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+node_modules
+yarn.lock
+dist
+public
+# O código de GPU veio do RoqueOS byte a byte e só muda com evidência num iPhone.
+# O Prettier do repo (3.3.3) quebra linha diferente do Prettier do front (3.7.4)
+# em `await import(...)`, e formatar aqui seria mudar arquivo de GPU sem motivo.
+src/servicos/render/
+# Os roteiros de QA e os documentos vieram do RoqueOS sem mudança (ver qa/README.md e
+# docs/README.md). O que foi escrito neste repo (os dois README e o
+# qa/lib/preparar-dist.mjs) continua passando pelo Prettier.
+qa/*
+!qa/README.md
+!qa/lib/
+qa/lib/*
+!qa/lib/preparar-dist.mjs
+docs/regras/
+docs/planos/
+docs/dev-docs/
+# O que as sondas de QA escrevem quando rodam.
+scripts/
