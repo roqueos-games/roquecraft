@@ -9,6 +9,13 @@ letra (conferido pelo hash do git contra `git rev-parse master:<caminho>`):
 | `regras/44-roquecraft-arquitetura.md`  | `.claude/rules/44-roquecraft-arquitetura.md` |
 | `planos/roquecraft-*.md` (25 arquivos) | `.claude/plans/roquecraft-*.md`              |
 | `dev-docs/roquecraft-v2.md`            | `.claude/dev-docs/roquecraft-v2.md`          |
+| `planos/goal19-*.md` (3 arquivos)      | `.claude/plans/goal19-*.md`                  |
+| `planos/goal20-a-cidade-viva.md`       | `.claude/plans/goal20-a-cidade-viva.md`      |
+| `evidencias/*.png` (4 fotos)           | `.qa-shots/` (as fotos do RoqueCraft)        |
+
+Os planos dos Goals 19 e 20 e as quatro fotos de evidência chegaram depois, em 26/09/2026, no
+Goal 26 do front (a limpeza do que não é mais do RoqueOS), copiados do mesmo jeito a partir do
+`roqueos-front` `5ec35b18`.
 
 São o registro de como o jogo foi pensado e das decisões que ficaram no código, e por isso não
 foram reescritos. **Todo caminho de arquivo citado neles é histórico**: fala da árvore do
