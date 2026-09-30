@@ -139,7 +139,18 @@
     "doMundo": "Como o mundo quiser",
     "limpo": "Céu limpo",
     "chovendo": "Chovendo",
-    "neve": "Nevando"
+    "neve": "Nevando",
+    "nascimento": "Nascimento",
+    "cama": "Cama",
+    "vila": "Vila",
+    "fortaleza": "Fortaleza",
+    "coordenada": "Coordenada",
+    "chao": "chão",
+    "ir": "Ir",
+    "voltar": "Voltar de onde veio",
+    "semCama": "Você ainda não dormiu numa cama",
+    "semVila": "Esta semente não tem vila por perto",
+    "coordenadaInvalida": "Coordenada inválida: X e Z inteiros, Y opcional"
   },
   "pause": {
     "credits": "Créditos",

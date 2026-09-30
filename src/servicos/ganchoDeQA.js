@@ -293,6 +293,9 @@ export function montarGanchoDeQA(ctx) {
         hunger: survival.hunger,
         level: survival.level,
         inventory: inventory.value.map((s) => (s ? { item: s.item, count: s.count } : null)),
+        // O slot da hotbar em uso: a sonda de teleporte prova que digitar `1`
+        // num campo do painel NÃO troca de slot.
+        hotbar: selectedSlot.value,
         mobs: entidades.mobs().length,
         drops: entidades.drops().length,
         mp: { active: mp.active, mode: mp.mode, players: mp.players },

@@ -4,6 +4,7 @@ import {
   focaveisDe,
   indiceFocado,
   usaAsSetas,
+  digitandoEm,
   PARA_FRENTE,
   PARA_TRAS,
 } from '../../src/servicos/focoDeTela.js'
@@ -177,5 +178,36 @@ describe('focoDeTela — de quem é a seta', () => {
   it('sem elemento nenhum, a seta é da malha', () => {
     expect(usaAsSetas(null)).toBe(false)
     expect(usaAsSetas({})).toBe(false)
+  })
+})
+
+// GOAL 23, ONDA 4: enquanto o jogador digita, a tecla é do campo. O `1` de uma
+// coordenada não é o slot 1; o `f` não liga o voo.
+describe('digitandoEm', () => {
+  const el = (tag, attrs = {}, extra = {}) => ({
+    tagName: tag.toUpperCase(),
+    getAttribute: (k) => attrs[k] ?? null,
+    ...extra,
+  })
+
+  it('campo de texto, número, área de texto, select e editável: está digitando', () => {
+    expect(digitandoEm(el('input'))).toBe(true)
+    expect(digitandoEm(el('input', { type: 'text' }))).toBe(true)
+    expect(digitandoEm(el('input', { type: 'number' }))).toBe(true)
+    expect(digitandoEm(el('input', { type: 'search' }))).toBe(true)
+    expect(digitandoEm(el('textarea'))).toBe(true)
+    expect(digitandoEm(el('select'))).toBe(true)
+    expect(digitandoEm(el('div', {}, { isContentEditable: true }))).toBe(true)
+  })
+
+  it('botão, caixa de marcar, range e o resto da tela: o jogo ouve', () => {
+    expect(digitandoEm(el('input', { type: 'checkbox' }))).toBe(false)
+    expect(digitandoEm(el('input', { type: 'range' }))).toBe(false)
+    expect(digitandoEm(el('input', { type: 'button' }))).toBe(false)
+    expect(digitandoEm(el('button'))).toBe(false)
+    expect(digitandoEm(el('div'))).toBe(false)
+    expect(digitandoEm(el('canvas'))).toBe(false)
+    expect(digitandoEm(null)).toBe(false)
+    expect(digitandoEm({})).toBe(false)
   })
 })

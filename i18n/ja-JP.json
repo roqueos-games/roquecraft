@@ -139,7 +139,18 @@
     "doMundo": "世界のまま",
     "limpo": "晴れ",
     "chovendo": "雨",
-    "neve": "雪"
+    "neve": "雪",
+    "nascimento": "スポーン地点",
+    "cama": "ベッド",
+    "vila": "村",
+    "fortaleza": "要塞",
+    "coordenada": "座標",
+    "chao": "地面",
+    "ir": "移動",
+    "voltar": "元の場所に戻る",
+    "semCama": "まだベッドで寝ていません",
+    "semVila": "このシードの近くに村はありません",
+    "coordenadaInvalida": "無効な座標：XとZは整数、Yは任意"
   },
   "pause": {
     "credits": "クレジット",

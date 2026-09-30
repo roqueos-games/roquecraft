@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { criarTravessia, ESPERA_NO_PORTAL } from '../../src/servicos/travessia.js'
+import {
+  criarTravessia,
+  criarLeitorDeDimensao,
+  ESPERA_NO_PORTAL,
+} from '../../src/servicos/travessia.js'
 import { ID, AIR } from '../../src/servicos/blocks.js'
 import { POUSO_DA_CHEGADA } from '../../src/servicos/endWorldgen.js'
+import { ehCopa, alturaDaSuperficie } from '../../src/servicos/viagemEntreDimensoes.js'
 
 //
 // A TRAVESSIA PELO PORTAL DO FIM, sem three.js: um mundo de mentira que só
@@ -76,5 +81,68 @@ describe('travessia — o portal do Fim', () => {
     const { t, log } = montar({ sobOsPes: ID.netherPortalX })
     for (let s = 0; s < ESPERA_NO_PORTAL + 0.3; s += 0.1) t.passo(0.1)
     expect(log.resets).toEqual(['nether'])
+  })
+})
+
+// GOAL 23, ONDA 4: um ponto na dimensão de agora (lugar, coordenada, volta), e
+// a travessia com alvo. O terreno é o da semente 1, gerado de verdade pelo
+// leitor: o que se prova é que o jogador chega EM PÉ sobre chão que não é copa.
+describe('travessia — um ponto na dimensão de agora', () => {
+  const leitor = criarLeitorDeDimensao(1, 'overworld', new Map())
+  const emPe = (p) => {
+    const chao = leitor(Math.floor(p.x), Math.floor(p.y) - 1, Math.floor(p.z))
+    return chao !== AIR && !ehCopa(chao)
+  }
+
+  it('`irAte` pousa perto do ponto, em pé, sem reconstruir o mundo, e imune', () => {
+    const { t, log, jogador } = montar()
+    expect(t.irAte({ x: 300.5, y: 200, z: -200.5 })).toBe(true)
+    expect(log.resets, 'pouso na mesma dimensão não é travessia').toEqual([])
+    expect(log.pousos).toHaveLength(1)
+    const p = log.pousos[0]
+    expect(Math.abs(p.x - 300.5)).toBeLessThanOrEqual(16)
+    expect(Math.abs(p.z + 200.5)).toBeLessThanOrEqual(16)
+    expect(emPe(p), `caiu em ${JSON.stringify(p)}`).toBe(true)
+    expect(jogador.x).toBe(p.x)
+    expect(t.imune()).toBe(true)
+  })
+
+  it('sem Y, o Y é a superfície da coluna (e não a altura de quem pediu)', () => {
+    const { t, log } = montar()
+    const superficie = alturaDaSuperficie(leitor, 'overworld', 300, -200)
+    expect(t.irAte({ x: 300.5, y: null, z: -200.5 })).toBe(true)
+    const p = log.pousos[0]
+    // O pouso mais perto de `superficie` na coluna ou ao lado: nunca a 64 do
+    // jogador, que era onde ele estava.
+    expect(Math.abs(p.y - superficie)).toBeLessThanOrEqual(8)
+  })
+
+  it('em sala não vai, e diz não', () => {
+    const jogador = { x: 0.5, y: 64, z: 0.5, vy: 0 }
+    const t = criarTravessia({
+      jogador,
+      mundo: () => ({ isLoaded: () => true, getBlock: () => AIR }),
+      semente: () => 1,
+      edicoes: new Map(),
+      dimensaoAtual: () => 'overworld',
+      emSala: () => true,
+      resetar: () => {},
+      pousar: () => {
+        throw new Error('não podia pousar')
+      },
+    })
+    expect(t.irAte({ x: 10, y: 70, z: 10 })).toBe(false)
+  })
+
+  it('`irPara` com alvo atravessa para o alvo, e não para a coordenada escalada', () => {
+    const { t, log, dimensao } = montar({ dimensao: 'nether' })
+    const alvo = { x: 260, y: 67, z: -168 }
+    expect(t.irPara('overworld', alvo)).toBe(true)
+    expect(dimensao()).toBe('overworld')
+    const p = log.pousos[0]
+    // Escalado seria 0,5 × 8 = 4; com alvo, é perto de 260 / −168.
+    expect(Math.abs(p.x - 260.5)).toBeLessThanOrEqual(16)
+    expect(Math.abs(p.z + 167.5)).toBeLessThanOrEqual(16)
+    expect(emPe(p), `caiu em ${JSON.stringify(p)}`).toBe(true)
   })
 })

@@ -11,6 +11,9 @@ import {
   marDe,
   RAZAO,
   ALTURA_LIVRE,
+  ehCopa,
+  planoDoPouso,
+  alturaDaSuperficie,
 } from '../../src/servicos/viagemEntreDimensoes.js'
 import { ehPortal } from '../../src/servicos/portal.js'
 import { AIR, ID } from '../../src/servicos/blocks.js'
@@ -256,5 +259,110 @@ describe('o plano do teleporte', () => {
 
   it('a lista de destinos tem as três dimensões, e só elas', () => {
     expect([...DESTINOS_DO_TELEPORTE].sort()).toEqual(['end', 'nether', 'overworld'])
+  })
+
+  // GOAL 23, ONDA 4: um ponto PEDIDO na dimensão de destino (lugar, volta).
+  it('com alvo, a coordenada do jogador NÃO é escalada: pousa perto do alvo', () => {
+    const alvo = { x: 260, y: 67, z: -168 }
+    const p = planoDoTeleporte('nether', 'overworld', jog, chaoAte(66), POUSO_FIM, 16, alvo)
+    expect(p.dimensao).toBe('overworld')
+    expect(p.pouso.x).toBeCloseTo(260.5, 5)
+    expect(p.pouso.z).toBeCloseTo(-167.5, 5)
+    expect(p.pouso.y).toBe(67)
+    expect(p.celulas).toEqual([])
+  })
+
+  it('com alvo no Fim, a volta vai ao alvo e não à plataforma', () => {
+    const alvo = { x: 40, y: 60, z: 40 }
+    const p = planoDoTeleporte('overworld', 'end', jog, chaoAte(59), POUSO_FIM, 16, alvo)
+    expect(p.pouso).toEqual({ x: 40.5, y: 60, z: 40.5 })
+  })
+})
+
+// A COPA NÃO É CHÃO (Goal 23, onda 4). A sonda de teleporte viu o jogador
+// voltar do Fim em cima de `spruceLeaves`; folha é sólida, e `chaoFirme`
+// aceitava. Agora a árvore inteira (folha e tronco) é recusada como apoio.
+describe('a copa não é chão', () => {
+  /** Terra até 40; uma árvore em (0,0): tronco 41..44, folhas 45..46 numa cruz. */
+  const comArvore = (x, y, z) => {
+    if (y <= 40) return ID.dirt
+    if (x === 0 && z === 0 && y >= 41 && y <= 44) return ID.oakLog
+    if (Math.abs(x) + Math.abs(z) <= 1 && (y === 45 || y === 46)) return ID.oakLeaves
+    return AIR
+  }
+
+  it('folha e tronco são copa; terra e pedra não', () => {
+    expect(ehCopa(ID.oakLeaves)).toBe(true)
+    expect(ehCopa(ID.spruceLeaves)).toBe(true)
+    expect(ehCopa(ID.oakLog)).toBe(true)
+    expect(ehCopa(ID.dirt)).toBe(false)
+    expect(ehCopa(ID.stone)).toBe(false)
+    expect(ehCopa(AIR)).toBe(false)
+  })
+
+  it('o pouso em cima da árvore é recusado: pousa na terra, ao lado', () => {
+    // Alvo bem em cima da copa. Sem a regra, `acharPouso` devolveria y=47
+    // (em pé sobre a folha de 46); com ela, o chão de terra em 41, ao lado.
+    const p = acharPouso(comArvore, { dimensao: 'overworld', x: 0, y: 47, z: 0 }, 4)
+    expect(p).not.toBeNull()
+    expect(comArvore(p.x, p.y - 1, p.z)).toBe(ID.dirt)
+    expect(p.y).toBe(41)
+  })
+})
+
+describe('o pouso na mesma dimensão e a superfície', () => {
+  const chaoAte = (topo) => (x, y) => (y <= topo ? ID.stone : AIR)
+
+  it('`planoDoPouso` põe o jogador em pé no chão mais perto do ponto', () => {
+    const p = planoDoPouso('overworld', { x: 300.5, y: 90, z: -200.5 }, chaoAte(64))
+    expect(p.forcado).toBe(false)
+    // floor(−200,5) = −201, mais o meio do bloco.
+    expect(p.pouso).toEqual({ x: 300.5, y: 65, z: -200.5 })
+  })
+
+  it('um tufo de capim no alvo NÃO manda o pouso para uma caverna: vai ao lado', () => {
+    // Chão em 70; capim em (0,71) e (1,71); uma caverna livre em y=3..8 na
+    // coluna do alvo. Sem a janela, a coluna inteira era varrida primeiro e o
+    // jogador pousava a 67 blocos de fundura em vez de um bloco ao lado.
+    const mundo = (x, y, z) => {
+      // A caverna tem os DOIS blocos de largura que `chaoFirme` exige.
+      if ((x === 0 || x === 1) && z === 0 && y >= 3 && y <= 8) return AIR
+      if (y <= 70) return ID.stone
+      if (y === 71 && (x === 0 || x === 1) && z === 0) return ID.tallGrass
+      return AIR
+    }
+    const p = planoDoPouso('overworld', { x: 0.5, y: 72, z: 0.5 }, mundo)
+    expect(p.forcado).toBe(false)
+    expect(p.pouso.y).toBe(71)
+    expect(Math.abs(p.pouso.x - 0.5) + Math.abs(p.pouso.z - 0.5)).toBeLessThanOrEqual(2)
+  })
+
+  it('e a janela é só a primeira tentativa: sem chão perto, a coluna inteira vale', () => {
+    // Só uma laje a 60 blocos abaixo do pedido.
+    const mundo = (x, y) => (y === 10 ? ID.stone : AIR)
+    const p = planoDoPouso('overworld', { x: 0.5, y: 70, z: 0.5 }, mundo, 2)
+    expect(p.forcado).toBe(false)
+    expect(p.pouso.y).toBe(11)
+  })
+
+  it('mato e flor não seguram: o pouso fica no chão de verdade, não em cima do tufo', () => {
+    const mundo = (x, y) => (y <= 70 ? ID.stone : y === 71 ? ID.tallGrass : AIR)
+    // Alvo em 72, em cima do capim: sem a regra, `chaoFirme` aceitava o capim
+    // como chão e o jogador chegava em pé um bloco acima do solo.
+    const p = acharPouso(mundo, { dimensao: 'overworld', x: 0, y: 72, z: 0 }, 0, 4)
+    expect(p).toBeNull()
+  })
+
+  it('sem chão em volta, o pouso é FORÇADO no próprio ponto, e não recusado', () => {
+    const p = planoDoPouso('overworld', { x: 10, y: 50, z: 10 }, () => AIR, 2)
+    expect(p.forcado).toBe(true)
+    expect(p.pouso).toEqual({ x: 10.5, y: 50, z: 10.5 })
+  })
+
+  it('`alturaDaSuperficie` é o primeiro bloco de cima para baixo, mais um', () => {
+    expect(alturaDaSuperficie(chaoAte(64), 'overworld', 5, 5)).toBe(65)
+    expect(alturaDaSuperficie(() => AIR, 'overworld', 5, 5)).toBe(null)
+    const { minY } = limites('overworld')
+    expect(alturaDaSuperficie(chaoAte(minY), 'overworld', 0, 0)).toBe(minY + 1)
   })
 })

@@ -11,9 +11,21 @@
 // função que ele tem além de recurso: andar oito blocos lá é andar sessenta e
 // quatro aqui. Sem ela, atravessar o portal é só mudar de cenário.
 //
-import { AIR, ID } from './blocks.js'
+import { AIR, ID, BLOCKS, IS_SOLID, TABELA_DE_IDS } from './blocks.js'
 import { dimensao, limites } from './dimensoes.js'
 import { idDoPortal } from './portal.js'
+
+/**
+ * A COPA NÃO É CHÃO. Folha e tronco são sólidos, e por isso `acharPouso`
+ * aceitava a copa de uma árvore como pouso: a sonda do Goal 23 viu o jogador
+ * voltar do Fim em cima de `spruceLeaves`. É o mesmo defeito de classe que o
+ * nascimento já resolvia com `topoDoSolo` (nascimento.js) e a travessia não.
+ * Máscara por id, como as outras de `blocks.js`, porque `acharPouso` consulta
+ * centenas de milhares de células e uma regex por célula não cabe ali.
+ */
+const COPA = new Uint8Array(TABELA_DE_IDS)
+for (const b of Object.values(BLOCKS)) if (/(Leaves|Log)$/.test(b.key)) COPA[b.id] = 1
+export const ehCopa = (id) => COPA[id] === 1
 
 /** Quantos blocos do overworld cabem num bloco do Nether. */
 export const RAZAO = 8
@@ -42,17 +54,26 @@ export function coordenadaDoOutroLado(de, x, y, z) {
 
 /** Um lugar serve de pouso se há chão sólido e altura de sobra para a moldura. */
 export const ALTURA_LIVRE = 5
+/** Quanto acima ou abaixo do Y pedido o pouso na mesma dimensão procura primeiro. */
+export const JANELA_DO_POUSO = 6
+
+/**
+ * Chão que SEGURA: sólido para a física (mato e flor não são; água e lava
+ * também não) e que não é copa de árvore. Antes bastava "não é ar nem
+ * líquido", e o jogador pousava em pé sobre um tufo de capim, um bloco acima
+ * do chão, ou em cima da copa.
+ */
+const segura = (id) => IS_SOLID[id] === 1 && !ehCopa(id)
 
 function chaoFirme(blocoEm, x, y, z) {
-  const chao = blocoEm(x, y - 1, z)
-  if (chao === AIR || chao === ID.lava || chao === ID.water) return false
+  if (!segura(blocoEm(x, y - 1, z))) return false
   for (let i = 0; i < ALTURA_LIVRE; i++) {
     if (blocoEm(x, y + i, z) !== AIR) return false
     // O vão tem DOIS blocos de largura: a moldura precisa dos dois, e um pouso
     // que só cabe de lado obrigaria a escavar logo depois de pousar.
     if (blocoEm(x + 1, y + i, z) !== AIR) return false
   }
-  return blocoEm(x + 1, y - 1, z) !== AIR
+  return segura(blocoEm(x + 1, y - 1, z))
 }
 
 /**
@@ -63,23 +84,30 @@ function chaoFirme(blocoEm, x, y, z) {
  * em altura, porque a razão 1:8 já é o que amarra os dois mundos e errar 20
  * blocos de lado desfaz o alinhamento que o jogador construiu.
  */
-export function acharPouso(blocoEm, alvo, raio = 12) {
+export function acharPouso(blocoEm, alvo, raio = 12, janela = Infinity) {
   // ⚠️ A COLUNA INTEIRA, NÃO UMA FAIXA AO REDOR DO Y. A primeira versão
   // procurava ±24 blocos de altura e forçava plataforma fora disso — e no
   // Nether, onde o salão aberto vive entre 32 e 100, um jogador que atravessa
   // voando a 110 no overworld chegava numa plataforma de obsidiana pendurada,
   // com o chão de verdade vinte blocos abaixo. Chão de verdade é melhor que
   // plataforma, e o laço já prefere o mais perto do alvo.
+  //
+  // `janela` é a exceção, para quem JÁ SABE a altura do chão (o pouso na
+  // mesma dimensão, com a superfície da coluna): sem ela, um tufo de capim no
+  // alvo mandava o laço varrer a coluna inteira e achar uma caverna a 70
+  // blocos de fundura ANTES de olhar a coluna ao lado. Quem chama com janela
+  // tenta de novo sem ela se não achar nada.
   const { minY, maxY } = limites(alvo.dimensao)
   const de = minY + 1
   const ate = maxY - ALTURA_LIVRE - 1
+  const alcance = Math.min(ate - de, janela)
   for (let r = 0; r <= raio; r++) {
     for (let dx = -r; dx <= r; dx++) {
       for (let dz = -r; dz <= r; dz++) {
         if (Math.max(Math.abs(dx), Math.abs(dz)) !== r) continue
         // Do alvo para fora, nas duas direções de altura ao mesmo tempo: o
         // pouso logo acima e o logo abaixo valem o mesmo.
-        for (let d = 0; d <= ate - de; d++) {
+        for (let d = 0; d <= alcance; d++) {
           for (const y of d === 0 ? [alvo.y] : [alvo.y + d, alvo.y - d]) {
             if (y < de || y > ate) continue
             if (chaoFirme(blocoEm, alvo.x + dx, y, alvo.z + dz)) {
@@ -215,25 +243,85 @@ export function coordenadaEscalada(de, para, x, y, z) {
  * @param {{x:number,y:number,z:number}} jogador
  * @param {(x,y,z)=>number} blocoEmDestino  leitor do mundo de destino
  * @param {{x,y,z}} [pousoDoFim]  o ponto de chegada do Fim, que é fixo
+ * @param {number} [raio]
+ * @param {{x,y,z}|null} [alvo]  um ponto PEDIDO na dimensão de destino (um
+ *   lugar, uma coordenada, a volta): quando vem, a coordenada do jogador não
+ *   é escalada, e o Fim não cai na plataforma
  * @returns {object|null} `null` quando o destino não existe ou é o de agora
  */
-export function planoDoTeleporte(de, para, jogador, blocoEmDestino, pousoDoFim = null, raio = 16) {
+export function planoDoTeleporte(
+  de,
+  para,
+  jogador,
+  blocoEmDestino,
+  pousoDoFim = null,
+  raio = 16,
+  alvo = null,
+) {
   if (!DESTINOS_DO_TELEPORTE.includes(para)) return null
   // ⚠️ IR PARA ONDE JÁ SE ESTÁ NÃO É VIAGEM. Sem esta linha o painel
   // reconstruiria o mundo inteiro e teleportaria o jogador para longe de onde
   // ele estava — do ponto de vista dele, um clique que embaralhou tudo.
+  // (Na mesma dimensão, um ponto pedido é `planoDoPouso`, que não reconstrói.)
   if (para === de) return null
   // O Fim tem UM ponto de chegada, e é o mesmo do portal: a plataforma de
   // obsidiana. Procurar chão lá daria pouso no vazio ao redor da ilha.
-  if (para === 'end' && pousoDoFim)
+  if (para === 'end' && pousoDoFim && !alvo)
     return { dimensao: 'end', forcado: false, celulas: [], pouso: { ...pousoDoFim } }
-  const alvo = coordenadaEscalada(de, para, jogador.x, jogador.y, jogador.z)
-  const achado = acharPouso(blocoEmDestino, alvo, raio)
-  const pouso = achado || { x: alvo.x, y: alvo.y, z: alvo.z }
+  const alvoNaDimensao = alvo
+    ? pontoNaDimensao(para, alvo)
+    : coordenadaEscalada(de, para, jogador.x, jogador.y, jogador.z)
+  const achado = acharPouso(blocoEmDestino, alvoNaDimensao, raio)
+  const pouso = achado || { x: alvoNaDimensao.x, y: alvoNaDimensao.y, z: alvoNaDimensao.z }
   return {
     dimensao: para,
     forcado: !achado,
     celulas: [],
     pouso: { x: pouso.x + 0.5, y: pouso.y, z: pouso.z + 0.5 },
   }
+}
+
+/** Um ponto pedido, inteiro e dentro da faixa habitável da dimensão. */
+export function pontoNaDimensao(id, alvo) {
+  const { minY, maxY } = limites(id)
+  return {
+    dimensao: id,
+    x: Math.floor(alvo.x),
+    y: Math.min(maxY - 4, Math.max(minY + 2, Math.floor(alvo.y))),
+    z: Math.floor(alvo.z),
+  }
+}
+
+/**
+ * O pouso perto de um ponto NA MESMA DIMENSÃO (Goal 23, onda 4: um lugar, uma
+ * coordenada digitada, a volta). Não é travessia: nada se guarda, nada se
+ * reconstrói; o jogador é posto em pé no chão firme mais perto do ponto, e o
+ * mundo carrega os chunks em volta como carrega quando ele voa até lá.
+ *
+ * `forcado` quando não há chão em `raio`: o jogador chega no ponto pedido
+ * mesmo assim, e em criativo ele voa. Recusar a viagem por falta de chão seria
+ * a estrutura mandando no jogo.
+ */
+export function planoDoPouso(id, alvo, blocoEm, raio = 16) {
+  const ponto = pontoNaDimensao(id, alvo)
+  // Perto da altura pedida primeiro (o Y de um lugar é o chão dele); só
+  // depois a coluna inteira, como a travessia faz.
+  const achado =
+    acharPouso(blocoEm, ponto, raio, JANELA_DO_POUSO) ?? acharPouso(blocoEm, ponto, raio)
+  const pouso = achado || ponto
+  return { forcado: !achado, pouso: { x: pouso.x + 0.5, y: pouso.y, z: pouso.z + 0.5 } }
+}
+
+/**
+ * A altura do primeiro bloco de cima para baixo nesta coluna, mais um; `null`
+ * numa coluna só de ar. É o Y de uma coordenada digitada sem Y no supermundo.
+ * No Nether o primeiro bloco de cima é o TETO de bedrock, e por isso lá quem
+ * escolhe o Y é o jogador (ver `useRoqueCraftCriativo`).
+ */
+export function alturaDaSuperficie(blocoEm, id, x, z) {
+  const { minY, maxY } = limites(id)
+  for (let y = maxY - 1; y >= minY; y--) {
+    if (blocoEm(x, y, z) !== AIR) return y + 1
+  }
+  return null
 }

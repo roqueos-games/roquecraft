@@ -12,20 +12,12 @@
 // É SERVIÇO E NÃO COMPOSABLE: nenhum método guarda timer, assinatura ou
 // listener. Todos leem.
 
-import {
-  BIOMAS_DA_ALDEIA,
-  planoDaAldeia,
-  colunaDaAldeia,
-  CELULA,
-  RAIO_ESCRITO,
-  porteDe,
-  raioEscritoDe,
-} from './aldeia.js'
+import { colunaDaAldeia, CELULA, RAIO_ESCRITO, porteDe, raioEscritoDe } from './aldeia.js'
 import { hash3 } from './noise.js'
 import { SEA_LEVEL, toChunkCoord } from './constants.js'
 import { BIOME_NAMES, createNoiseContext, solidTopAt, terrainHeight, biomeAt } from './worldgen.js'
 import { BLOCKS, AIR } from './blocks.js'
-import { MATERIAIS } from './vilaCasa.js'
+import { planoDaVilaEm } from './lugares.js'
 import {
   ALTURA_DO_CASTELO,
   BIOMAS_DO_CASTELO,
@@ -60,26 +52,12 @@ export function criarQaDeAldeia({ seed }) {
     return nz
   }
 
-  /** O plano da célula que contém este chunk. */
-  const planoEm = (cx, cz, porte = 'vila') => {
-    const n = ruido()
-    return planoDaAldeia(
-      (a, b, c) => hash3(a, b, c, seed.value),
-      {
-        alturaEm: (x, z) => solidTopAt(n, x, z),
-        nivelDoMar: SEA_LEVEL,
-        biomaEm: (x, z) => biomeAt(n, x, z, terrainHeight(n, x, z)),
-        biomaAceito: (b) => BIOMAS_DA_ALDEIA.includes(BIOME_NAMES[b]),
-        materialDaVila: (c) =>
-          BIOME_NAMES[biomeAt(n, c.x, c.z, terrainHeight(n, c.x, c.z))] === 'savanna'
-            ? MATERIAIS.pinho
-            : MATERIAIS.carvalho,
-      },
-      cx,
-      cz,
-      porte,
-    )
-  }
+  /**
+   * O plano da célula que contém este chunk. A conta mora em `lugares.js`
+   * desde o Goal 35: é a mesma que leva o jogador à vila pelo menu K, e a sonda
+   * e o jogo têm que perguntar à mesma.
+   */
+  const planoEm = (cx, cz, porte = 'vila') => planoDaVilaEm(ruido(), seed.value, cx, cz, porte)
 
   const planoDoForte = (cx, cz) => {
     const n = ruido()

@@ -17,7 +17,10 @@ function montar(modoInicial = 'creative', over = {}) {
   // ⚠️ `avisos` guarda a CHAVE, e não um contador. Eram dois caminhos de
   // recado (`avisarSoCriativo` e `avisar`) fazendo a mesma chamada com chaves
   // diferentes; viraram um só, e o teste passou a conferir O QUE foi dito.
-  const chamadas = { chuva: [], avisos: [], horas: [], raios: 0, destinos: [] }
+  const chamadas = { chuva: [], avisos: [], horas: [], raios: 0, destinos: [], pontos: [] }
+  // O mundo de mentira da onda 4: a dimensão e a posição MUDAM quando a
+  // travessia aceita, como no jogo, senão "voltar" não teria de onde voltar.
+  const mundo = { dimensao: over.dimensaoInicial ?? 'overworld', x: 10.5, y: 70, z: -20.5 }
   const c = useRoqueCraftCriativo({
     modo: () => modo.value,
     forcarChuva: (v) => chamadas.chuva.push(v),
@@ -27,16 +30,27 @@ function montar(modoInicial = 'creative', over = {}) {
     bioma: () => 'Tundra',
     nevando: () => true,
     soltarRaio: () => chamadas.raios++,
-    dimensao: over.dimensao ?? (() => 'overworld'),
-    irParaDimensao: (d) => {
-      chamadas.destinos.push(d)
-      return over.travessiaAceita ?? true
+    dimensao: over.dimensao ?? (() => mundo.dimensao),
+    irParaDimensao: (d, alvo = null) => {
+      chamadas.destinos.push(alvo ? { d, alvo } : d)
+      if (over.travessiaAceita === false) return false
+      mundo.dimensao = d
+      if (alvo) Object.assign(mundo, { x: alvo.x, y: alvo.y, z: alvo.z })
+      return true
     },
+    irAte: (alvo) => {
+      chamadas.pontos.push({ ...alvo })
+      if (over.pousoAceito === false) return false
+      Object.assign(mundo, { x: alvo.x, y: alvo.y ?? 64, z: alvo.z })
+      return true
+    },
+    posicao: () => ({ x: mundo.x, y: mundo.y, z: mundo.z }),
+    lugar: over.lugar ?? (() => null),
     emSala: over.emSala ?? (() => false),
     avisar: (chave) => chamadas.avisos.push(chave),
   })
   c.vigiarModo(modo)
-  return { c, modo, chamadas }
+  return { c, modo, chamadas, mundo }
 }
 
 describe('useRoqueCraftCriativo', () => {
@@ -108,6 +122,9 @@ describe('useRoqueCraftCriativo', () => {
       // onde o jogador já está, e explica a recusa em sala.
       dimensao: 'overworld',
       emSala: false,
+      // Onda 4: "voltar" e a cama são ligados ou desligados pelo painel.
+      podeVoltar: false,
+      temCama: false,
     })
   })
 
@@ -178,5 +195,139 @@ describe('useRoqueCraftCriativo — o teleporte', () => {
     const { c } = montar('creative', { dimensao: () => 'end', emSala: () => true })
     expect(c.vista.value.dimensao).toBe('end')
     expect(c.vista.value.emSala).toBe(true)
+  })
+})
+
+// GOAL 23, ONDA 4: lugares, coordenada e voltar. O que se prova é a FIAÇÃO e
+// as recusas ditas; onde cada lugar fica é de `lugares.js`, e o pouso é da
+// travessia.
+describe('useRoqueCraftCriativo — lugares, coordenada e voltar', () => {
+  const LUGARES = {
+    nascimento: { dimensao: 'overworld', x: 0.5, y: 66, z: 0.5 },
+    vila: { dimensao: 'overworld', x: -392, y: 65, z: -104 },
+    fortaleza: { dimensao: 'overworld', x: 260, y: 67, z: -168 },
+  }
+  const comLugares = (over = {}) =>
+    montar('creative', { lugar: (chave) => LUGARES[chave] ?? null, ...over })
+
+  it('um lugar na mesma dimensão é POUSO (`irAte`), e lembra de onde saiu', () => {
+    const { c, chamadas, mundo } = comLugares()
+    expect(c.irAoLugar('vila')).toBe(true)
+    expect(chamadas.pontos).toEqual([LUGARES.vila])
+    expect(chamadas.destinos, 'reconstruiu o mundo para andar na mesma dimensão').toEqual([])
+    expect(mundo.x).toBe(-392)
+    expect(c.historico.value).toEqual([{ dimensao: 'overworld', x: 10.5, y: 70, z: -20.5 }])
+    expect(c.vista.value.podeVoltar).toBe(true)
+  })
+
+  it('um lugar em OUTRA dimensão é travessia com alvo, e não coordenada escalada', () => {
+    const { c, chamadas } = comLugares({ dimensaoInicial: 'nether' })
+    expect(c.irAoLugar('fortaleza')).toBe(true)
+    expect(chamadas.destinos).toEqual([{ d: 'overworld', alvo: LUGARES.fortaleza }])
+    expect(chamadas.pontos).toEqual([])
+  })
+
+  it('a cama que não existe é DITA, e a vila que a semente não tem também', () => {
+    const { c, chamadas } = comLugares()
+    expect(c.irAoLugar('cama')).toBe(false)
+    expect(chamadas.avisos).toEqual(['roqueCraft.criativo.semCama'])
+    expect(c.vista.value.temCama).toBe(false)
+    const semVila = montar('creative', { lugar: () => null })
+    expect(semVila.c.irAoLugar('vila')).toBe(false)
+    expect(semVila.chamadas.avisos).toEqual(['roqueCraft.criativo.semVila'])
+  })
+
+  it('com cama, o painel sabe (`temCama`) e vai até ela', () => {
+    const cama = { dimensao: 'overworld', x: 3.5, y: 65, z: 4.5 }
+    const { c, chamadas } = montar('creative', { lugar: (k) => (k === 'cama' ? cama : null) })
+    expect(c.vista.value.temCama).toBe(true)
+    expect(c.irAoLugar('cama')).toBe(true)
+    expect(chamadas.pontos).toEqual([cama])
+  })
+
+  it('em sobrevivência e em sala, lugar e coordenada são recusados e ditos', () => {
+    const sobrevivencia = comLugares()
+    sobrevivencia.modo.value = 'survival'
+    expect(sobrevivencia.c.irAoLugar('vila')).toBe(false)
+    expect(sobrevivencia.c.irACoordenada({ x: '1', z: '2' })).toBe(false)
+    expect(sobrevivencia.chamadas.avisos).toEqual([
+      'roqueCraft.flyCreativeOnly',
+      'roqueCraft.flyCreativeOnly',
+    ])
+    const sala = comLugares({ emSala: () => true })
+    expect(sala.c.irAoLugar('vila')).toBe(false)
+    expect(sala.c.voltar()).toBe(false)
+    expect(sala.chamadas.avisos).toEqual([
+      'roqueCraft.criativo.naSalaNao',
+      'roqueCraft.criativo.naSalaNao',
+    ])
+    expect(sala.chamadas.pontos).toEqual([])
+  })
+
+  it('a coordenada digitada vai ao meio do bloco; sem Y, o Y fica para a travessia', () => {
+    const { c, chamadas } = comLugares()
+    expect(c.irACoordenada({ x: ' 300 ', y: '', z: '-200' })).toBe(true)
+    expect(chamadas.pontos).toEqual([{ dimensao: 'overworld', x: 300.5, y: null, z: -199.5 }])
+    expect(c.irACoordenada({ x: '1', y: '80', z: '1' })).toBe(true)
+    expect(chamadas.pontos[1]).toEqual({ dimensao: 'overworld', x: 1.5, y: 80, z: 1.5 })
+  })
+
+  it('coordenada que não é coordenada é recusada e DITA, sem mexer no jogador', () => {
+    const { c, chamadas } = comLugares()
+    expect(c.irACoordenada({ x: 'abc', z: '1' })).toBe(false)
+    expect(c.irACoordenada({ x: '1', z: '' })).toBe(false)
+    expect(chamadas.avisos).toEqual([
+      'roqueCraft.criativo.coordenadaInvalida',
+      'roqueCraft.criativo.coordenadaInvalida',
+    ])
+    expect(chamadas.pontos).toEqual([])
+    expect(c.historico.value).toEqual([])
+  })
+
+  it('se a travessia recusar o pouso, avisa e NÃO lembra: não houve saída', () => {
+    const { c, chamadas } = comLugares({ pousoAceito: false })
+    expect(c.irAoLugar('vila')).toBe(false)
+    expect(chamadas.avisos).toEqual(['roqueCraft.criativo.agoraNao'])
+    expect(c.historico.value).toEqual([])
+  })
+
+  it('voltar devolve à dimensão E à posição de origem, e anda o histórico', () => {
+    const { c, chamadas, mundo } = comLugares()
+    // Supermundo (10,70,−20) → Nether pelo botão da dimensão → vila (supermundo).
+    expect(c.teleportar('nether')).toBe(true)
+    mundo.x = 1
+    mundo.z = -2
+    expect(c.irAoLugar('vila')).toBe(true)
+    expect(c.historico.value).toHaveLength(2)
+    // Primeira volta: ao Nether, onde estava antes da vila (travessia com alvo).
+    expect(c.voltar()).toBe(true)
+    expect(chamadas.destinos.at(-1)).toEqual({
+      d: 'nether',
+      alvo: { dimensao: 'nether', x: 1, y: 70, z: -2 },
+    })
+    expect(mundo.dimensao).toBe('nether')
+    expect(c.historico.value).toHaveLength(1)
+    // Segunda volta: ao supermundo, onde tudo começou. Duas voltas andam duas
+    // para trás, e não quicam entre os dois últimos pontos.
+    expect(c.voltar()).toBe(true)
+    expect(chamadas.destinos.at(-1)).toEqual({
+      d: 'overworld',
+      alvo: { dimensao: 'overworld', x: 10.5, y: 70, z: -20.5 },
+    })
+    expect(c.historico.value).toEqual([])
+    expect(c.vista.value.podeVoltar).toBe(false)
+    // Sem de onde voltar, não faz nada e não assusta.
+    expect(c.voltar()).toBe(false)
+    expect(chamadas.avisos).toEqual([])
+  })
+
+  it('as ações do painel batem nas mesmas portas', () => {
+    const { c, chamadas } = comLugares()
+    c.acoes.lugar('nascimento')
+    c.acoes.coordenada({ x: '5', y: '', z: '5' })
+    c.acoes.voltar()
+    expect(chamadas.pontos).toHaveLength(3)
+    expect(chamadas.pontos[0]).toEqual(LUGARES.nascimento)
+    expect(chamadas.pontos[2].x).toBe(0.5)
   })
 })

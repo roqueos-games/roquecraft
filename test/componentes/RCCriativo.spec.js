@@ -291,4 +291,54 @@ describe('RCCriativo — os lugares', () => {
     expect(w.get('[data-test="rc-cri-dimensao"]').text()).toBeTruthy()
     w.unmount()
   })
+
+  // GOAL 23, ONDA 4: os lugares do mundo, a coordenada e a volta.
+  it('os quatro lugares do mundo estão na fila, e a cama sem cama fica desligada', async () => {
+    const w = await nosLugares({ temCama: false })
+    for (const l of ['nascimento', 'cama', 'vila', 'fortaleza'])
+      expect(w.find(`[data-test="rc-cri-lugar-${l}"]`).exists(), l).toBe(true)
+    expect(w.get('[data-test="rc-cri-lugar-cama"]').attributes('disabled')).toBe('')
+    expect(w.get('[data-test="rc-cri-lugar-vila"]').attributes('disabled')).toBeUndefined()
+    await w.get('[data-test="rc-cri-lugar-vila"]').trigger('click')
+    expect(w.emitted('lugar')).toEqual([['vila']])
+    w.unmount()
+  })
+
+  it('com cama, o botão dela liga e emite', async () => {
+    const w = await nosLugares({ temCama: true })
+    expect(w.get('[data-test="rc-cri-lugar-cama"]').attributes('disabled')).toBeUndefined()
+    await w.get('[data-test="rc-cri-lugar-cama"]').trigger('click')
+    expect(w.emitted('lugar')).toEqual([['cama']])
+    w.unmount()
+  })
+
+  it('a coordenada sobe como TEXTO, com X, Y e Z, no submit do formulário (Enter vale)', async () => {
+    const w = await nosLugares()
+    await w.get('[data-test="rc-cri-x"]').setValue(' 300 ')
+    await w.get('[data-test="rc-cri-z"]').setValue('-200')
+    await w.get('[data-test="rc-cri-ir-coordenada"]').trigger('submit')
+    // Y vazio vai vazio: quem decide que vazio é "o chão" é `coordenadaDigitada`.
+    expect(w.emitted('coordenada')).toEqual([[{ x: ' 300 ', y: '', z: '-200' }]])
+    w.unmount()
+  })
+
+  it('voltar fica desligado sem de onde voltar, e emite quando há', async () => {
+    const sem = await nosLugares({ podeVoltar: false })
+    expect(sem.get('[data-test="rc-cri-voltar"]').attributes('disabled')).toBe('')
+    sem.unmount()
+    const com = await nosLugares({ podeVoltar: true })
+    expect(com.get('[data-test="rc-cri-voltar"]').attributes('disabled')).toBeUndefined()
+    await com.get('[data-test="rc-cri-voltar"]').trigger('click')
+    expect(com.emitted('voltar')).toHaveLength(1)
+    com.unmount()
+  })
+
+  it('em sala, lugares, coordenada e voltar desligam junto com as dimensões', async () => {
+    const w = await nosLugares({ emSala: true, temCama: true, podeVoltar: true })
+    for (const l of ['nascimento', 'cama', 'vila', 'fortaleza'])
+      expect(w.get(`[data-test="rc-cri-lugar-${l}"]`).attributes('disabled'), l).toBe('')
+    expect(w.get('[data-test="rc-cri-ir-coordenada"]').attributes('disabled')).toBe('')
+    expect(w.get('[data-test="rc-cri-voltar"]').attributes('disabled')).toBe('')
+    w.unmount()
+  })
 })

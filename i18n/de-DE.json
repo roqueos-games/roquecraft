@@ -139,7 +139,18 @@
     "doMundo": "Wie die Welt will",
     "limpo": "Klarer Himmel",
     "chovendo": "Es regnet",
-    "neve": "Es schneit"
+    "neve": "Es schneit",
+    "nascimento": "Spawn",
+    "cama": "Bett",
+    "vila": "Dorf",
+    "fortaleza": "Festung",
+    "coordenada": "Koordinate",
+    "chao": "Boden",
+    "ir": "Los",
+    "voltar": "Zurück zum Ausgangspunkt",
+    "semCama": "Du hast noch in keinem Bett geschlafen",
+    "semVila": "Dieser Seed hat kein Dorf in der Nähe",
+    "coordenadaInvalida": "Ungültige Koordinate: X und Z ganzzahlig, Y optional"
   },
   "pause": {
     "credits": "Danksagungen",

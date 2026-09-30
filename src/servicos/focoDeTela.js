@@ -140,3 +140,33 @@ export function usaAsSetas(el) {
  * depois de abrir a tela, e o caso de alguém ter escapado para trás do véu.
  */
 export const indiceFocado = (lista, ativo) => lista.indexOf(ativo)
+
+/** Tipos de `<input>` em que a tecla NÃO escreve: neles o jogo pode ouvir. */
+const TIPOS_QUE_NAO_ESCREVEM = new Set([
+  'button',
+  'checkbox',
+  'radio',
+  'range',
+  'submit',
+  'reset',
+  'color',
+  'file',
+])
+
+/**
+ * O jogador está DIGITANDO neste elemento? Enquanto sim, a tecla é do campo:
+ * o `1` de uma coordenada não é o slot 1 da hotbar, o `f` de um nome não liga
+ * o voo, o `e` não abre o inventário. Só o Escape continua sendo da tela.
+ *
+ * ⚠️ Existe porque o painel de criativo ganhou campos de texto (a coordenada,
+ * Goal 23 onda 4) e `onKeyDown` ouve a página inteira. O chat tinha a própria
+ * guarda (`chatOpen`); esta vale para qualquer campo, em qualquer tela.
+ */
+export function digitandoEm(el) {
+  if (!el?.tagName) return false
+  if (el.isContentEditable === true) return true
+  const tag = el.tagName.toLowerCase()
+  if (tag === 'textarea' || tag === 'select') return true
+  if (tag !== 'input') return false
+  return !TIPOS_QUE_NAO_ESCREVEM.has((el.getAttribute?.('type') || 'text').toLowerCase())
+}

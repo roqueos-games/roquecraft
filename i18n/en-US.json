@@ -139,7 +139,18 @@
     "doMundo": "As the world wants",
     "limpo": "Clear sky",
     "chovendo": "Raining",
-    "neve": "Snowing"
+    "neve": "Snowing",
+    "nascimento": "Spawn",
+    "cama": "Bed",
+    "vila": "Village",
+    "fortaleza": "Stronghold",
+    "coordenada": "Coordinate",
+    "chao": "ground",
+    "ir": "Go",
+    "voltar": "Back to where you came from",
+    "semCama": "You have not slept in a bed yet",
+    "semVila": "This seed has no village nearby",
+    "coordenadaInvalida": "Invalid coordinate: whole X and Z, Y optional"
   },
   "pause": {
     "credits": "Credits",

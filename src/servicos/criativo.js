@@ -127,6 +127,60 @@ export const LUGARES = [
   { chave: 'end', i18n: 'roqueCraft.criativo.fim' },
 ]
 
+/**
+ * Os lugares do mundo que a aba "Lugares" alcança (Goal 23, onda 4), na ordem
+ * em que o jogador os ganha: nasce, dorme, procura a vila, cava a fortaleza.
+ * Todos ficam no supermundo; quem sabe ONDE é `lugares.js` (semente) e o save
+ * (a cama).
+ */
+export const LUGARES_DO_MUNDO = [
+  { chave: 'nascimento', i18n: 'roqueCraft.criativo.nascimento' },
+  { chave: 'cama', i18n: 'roqueCraft.criativo.cama' },
+  { chave: 'vila', i18n: 'roqueCraft.criativo.vila' },
+  { chave: 'fortaleza', i18n: 'roqueCraft.criativo.fortaleza' },
+]
+
+/** Até onde uma coordenada digitada vai. O mundo é infinito; o ruído, não. */
+export const LIMITE_DA_COORDENADA = 1_000_000
+
+/**
+ * A coordenada que o jogador digitou, ou `null` quando não é uma coordenada.
+ *
+ * X e Z são obrigatórios e inteiros dentro do limite; Y é opcional (vazio =
+ * "o chão", que quem sabe é o mundo, não este módulo). Vírgula vale como
+ * ponto, porque o teclado brasileiro põe vírgula. `"12abc"` NÃO é 12: um
+ * `parseInt` aceitaria e o jogador iria para onde não digitou.
+ */
+export function coordenadaDigitada({ x, z, y } = {}) {
+  const inteiro = (v) => {
+    if (v === null || v === undefined) return null
+    const s = String(v).trim().replace(',', '.')
+    if (s === '' || !/^-?\d+(\.\d+)?$/.test(s)) return null
+    const n = Math.trunc(Number(s))
+    return Math.abs(n) <= LIMITE_DA_COORDENADA ? n : null
+  }
+  const cx = inteiro(x)
+  const cz = inteiro(z)
+  if (cx === null || cz === null) return null
+  const semY = y === null || y === undefined || String(y).trim() === ''
+  const cy = semY ? null : inteiro(y)
+  if (!semY && cy === null) return null
+  return { x: cx, z: cz, y: cy }
+}
+
+/** Quantas posições "voltar" lembra. Mais que isso é histórico, não volta. */
+export const TETO_DO_HISTORICO = 8
+
+/**
+ * O histórico com a posição de onde se saiu no fim. Puro: devolve lista nova.
+ * `voltar` tira do fim; é o que faz dois teleportes seguidos voltarem na ordem
+ * inversa, e não os dois para o mesmo lugar.
+ */
+export function lembrarDeOndeSaiu(historico, posicao) {
+  const p = { dimensao: posicao.dimensao, x: posicao.x, y: posicao.y, z: posicao.z }
+  return [...(historico || []), p].slice(-TETO_DO_HISTORICO)
+}
+
 export const ABA_PADRAO = ABAS[0].chave
 
 /**

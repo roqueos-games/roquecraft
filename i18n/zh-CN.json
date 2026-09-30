@@ -139,7 +139,18 @@
     "doMundo": "随世界而定",
     "limpo": "晴朗",
     "chovendo": "下雨",
-    "neve": "下雪"
+    "neve": "下雪",
+    "nascimento": "出生点",
+    "cama": "床",
+    "vila": "村庄",
+    "fortaleza": "要塞",
+    "coordenada": "坐标",
+    "chao": "地面",
+    "ir": "前往",
+    "voltar": "返回出发点",
+    "semCama": "你还没有在床上睡过",
+    "semVila": "这个种子附近没有村庄",
+    "coordenadaInvalida": "坐标无效：X 和 Z 需为整数，Y 可选"
   },
   "pause": {
     "credits": "制作名单",

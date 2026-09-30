@@ -15,6 +15,7 @@
 // do celular, o toque de mira, e os dois relogios de duplo-toque.
 
 import { TECLAS_DO_JOGO, ehDuploToque } from '../servicos/teclado.js'
+import { digitandoEm } from '../servicos/focoDeTela.js'
 import { pressionarColocar, soltarColocar } from '../servicos/construcao.js'
 import { ref, reactive, watch } from 'vue'
 
@@ -155,6 +156,10 @@ export function useRoqueCraftEntrada({ alvo, ajustes, olhar, telas, jogo, acoes,
   function onKeyDown(e) {
     if (!ativo()) return
     if (telas.chatOpen.value) return
+    // ⚠️ ENQUANTO O JOGADOR DIGITA NUM CAMPO, A TECLA É DO CAMPO. O painel de
+    // criativo tem a coordenada (Goal 23, onda 4): sem isto, o `1` de "x=120"
+    // trocava para o slot 1 e o `f` ligava o voo. Só o Escape segue da tela.
+    if (e.code !== 'Escape' && digitandoEm(e.target)) return
     // ⚠️ ANTES DE QUALQUER COISA: se a tecla e do jogo e o jogo esta em foco, o
     // navegador nao leva. Fora do jogo (menu, inventario, chat) o atalho do
     // navegador continua sendo do usuario - quem esta lendo um menu espera que

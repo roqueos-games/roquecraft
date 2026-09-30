@@ -1,5 +1,11 @@
 import { ref, watch, computed } from 'vue'
-import { podeReger, soltarTudo, velocidadeDoRelogio } from '../servicos/criativo.js'
+import {
+  podeReger,
+  soltarTudo,
+  velocidadeDoRelogio,
+  coordenadaDigitada,
+  lembrarDeOndeSaiu,
+} from '../servicos/criativo.js'
 
 /**
  * REGER O MUNDO — o estado do painel de criativo.
@@ -32,7 +38,14 @@ import { podeReger, soltarTudo, velocidadeDoRelogio } from '../servicos/criativo
  * @param {() => boolean} ctx.nevando
  * @param {() => void} ctx.soltarRaio
  * @param {() => string} ctx.dimensao  GETTER da dimensão viva
- * @param {(d: string) => boolean} ctx.irParaDimensao  a porta da travessia
+ * @param {(d: string, alvo?: object|null) => boolean} ctx.irParaDimensao  a porta
+ *   da travessia; com `alvo`, pousa perto dele em vez de escalar a coordenada
+ * @param {(alvo: {x,y,z}) => boolean} ctx.irAte  um ponto na dimensão de agora
+ *   (`y: null` = o chão, que a travessia acha)
+ * @param {() => {x:number,y:number,z:number}} ctx.posicao  onde o jogador está
+ * @param {(chave: string) => object|null} ctx.lugar  onde fica um lugar do
+ *   mundo (`nascimento`, `cama`, `vila`, `fortaleza`) como `{dimensao,x,y,z}`,
+ *   ou `null` quando ele não existe (sem cama, semente sem vila)
  * @param {() => boolean} ctx.emSala  multijogador: a dimensão é outra fatia
  * @param {(chave: string) => void} ctx.avisar  recado curto na tela, por chave
  *   de i18n. ⚠️ UM CAMINHO SÓ para todo recado deste painel: eram dois
@@ -51,11 +64,16 @@ export function useRoqueCraftCriativo({
   soltarRaio,
   dimensao,
   irParaDimensao,
+  irAte = () => false,
+  posicao = () => ({ x: 0, y: 0, z: 0 }),
+  lugar = () => null,
   emSala,
   avisar,
 }) {
   const aberto = ref(false)
   const travado = ref(false)
+  /** De onde cada teleporte saiu, para "voltar". Lista nova a cada mudança. */
+  const historico = ref([])
 
   function alternar() {
     if (!podeReger(modo())) {
@@ -96,7 +114,7 @@ export function useRoqueCraftCriativo({
    * acha que o jogo travou, e o defeito que ele relata é "o teleporte não
    * funciona" — sem dizer que estava numa sala.
    */
-  function teleportar(destino) {
+  function podeTeleportar() {
     if (!podeReger(modo())) {
       avisar('roqueCraft.flyCreativeOnly')
       return false
@@ -105,11 +123,77 @@ export function useRoqueCraftCriativo({
       avisar('roqueCraft.criativo.naSalaNao')
       return false
     }
+    return true
+  }
+
+  /** Onde o jogador está agora, com a dimensão: é o que "voltar" devolve. */
+  const aqui = () => ({ dimensao: dimensao(), ...posicao() })
+
+  /**
+   * Leva a um ponto, na dimensão que for: a mesma dimensão é pouso
+   * (`irAte`), outra é travessia com alvo (`irParaDimensao`). Antes de ir,
+   * lembra de onde saiu; é o ÚNICO lugar que escreve no histórico, para o
+   * lugar, a coordenada e a própria volta lembrarem do mesmo jeito.
+   */
+  function irAoPonto(ponto, { lembrar = true } = {}) {
+    const de = aqui()
+    const foi =
+      ponto.dimensao === de.dimensao ? irAte(ponto) : irParaDimensao(ponto.dimensao, ponto)
+    if (!foi) {
+      avisar('roqueCraft.criativo.agoraNao')
+      return false
+    }
+    if (lembrar) historico.value = lembrarDeOndeSaiu(historico.value, de)
+    return true
+  }
+
+  function teleportar(destino) {
+    if (!podeTeleportar()) return false
     if (destino === dimensao()) return false
+    const de = aqui()
     const foi = irParaDimensao(destino)
     // A travessia recusa sozinha no meio de outra troca. Se ela disse não, o
     // jogador precisa saber por que o clique não fez nada.
     if (!foi) avisar('roqueCraft.criativo.agoraNao')
+    else historico.value = lembrarDeOndeSaiu(historico.value, de)
+    return foi
+  }
+
+  /** Um lugar do mundo pelo nome (Goal 23, onda 4). Lugar que não existe é DITO. */
+  function irAoLugar(chave) {
+    if (!podeTeleportar()) return false
+    const ponto = lugar(chave)
+    if (!ponto) {
+      avisar(chave === 'cama' ? 'roqueCraft.criativo.semCama' : 'roqueCraft.criativo.semVila')
+      return false
+    }
+    return irAoPonto(ponto)
+  }
+
+  /**
+   * Uma coordenada digitada, na dimensão de agora. Sem Y (`null`), quem acha o
+   * chão é a travessia (`irAte`): o mundo é dela, não deste painel.
+   */
+  function irACoordenada(digitada) {
+    if (!podeTeleportar()) return false
+    const c = coordenadaDigitada(digitada)
+    if (!c) {
+      avisar('roqueCraft.criativo.coordenadaInvalida')
+      return false
+    }
+    return irAoPonto({ dimensao: dimensao(), x: c.x + 0.5, y: c.y, z: c.z + 0.5 })
+  }
+
+  /** De volta a de onde saiu no último teleporte, e o histórico anda um. */
+  function voltar() {
+    if (!podeTeleportar()) return false
+    const lista = historico.value
+    if (!lista.length) return false
+    const destino = lista[lista.length - 1]
+    // A volta NÃO se lembra: "voltar, voltar" tem que andar duas para trás, e
+    // não ficar quicando entre os dois últimos pontos.
+    const foi = irAoPonto(destino, { lembrar: false })
+    if (foi) historico.value = lista.slice(0, -1)
     return foi
   }
 
@@ -122,6 +206,8 @@ export function useRoqueCraftCriativo({
     neva: nevando(),
     dimensao: dimensao(),
     emSala: emSala(),
+    podeVoltar: historico.value.length > 0,
+    temCama: !!lugar('cama'),
   }))
 
   /** O que o painel dispara, num objeto só para `v-on`. */
@@ -133,14 +219,21 @@ export function useRoqueCraftCriativo({
     raio: () => soltarRaio(),
     soltar,
     teleportar: (d) => teleportar(d),
+    lugar: (chave) => irAoLugar(chave),
+    coordenada: (c) => irACoordenada(c),
+    voltar: () => voltar(),
   }
 
   return {
     aberto,
     travado,
+    historico,
     alternar,
     soltar,
     teleportar,
+    irAoLugar,
+    irACoordenada,
+    voltar,
     vigiarModo,
     velocidade,
     vista,

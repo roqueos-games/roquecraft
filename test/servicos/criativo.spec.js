@@ -13,6 +13,11 @@ import {
   leituraDoClima,
   estadoInicial,
   soltarTudo,
+  coordenadaDigitada,
+  lembrarDeOndeSaiu,
+  LIMITE_DA_COORDENADA,
+  TETO_DO_HISTORICO,
+  LUGARES_DO_MUNDO,
 } from '../../src/servicos/criativo.js'
 import {
   TICKS_PER_DAY,
@@ -140,5 +145,59 @@ describe('criativo — as abas do painel', () => {
     for (const a of ABAS) expect(ehAba(a.chave)).toBe(true)
     expect(ehAba('teleporte-que-ainda-nao-existe')).toBe(false)
     expect(ehAba('')).toBe(false)
+  })
+})
+
+// GOAL 23, ONDA 4: a coordenada digitada e a memória de onde se saiu.
+describe('a coordenada digitada', () => {
+  it('X e Z inteiros, Y opcional; espaço e vírgula decimal são tolerados', () => {
+    expect(coordenadaDigitada({ x: '120', z: '-45' })).toEqual({ x: 120, z: -45, y: null })
+    expect(coordenadaDigitada({ x: ' 120 ', z: '-45', y: '' })).toEqual({ x: 120, z: -45, y: null })
+    expect(coordenadaDigitada({ x: '12,7', z: '3.9', y: '70' })).toEqual({ x: 12, z: 3, y: 70 })
+    expect(coordenadaDigitada({ x: 0, z: 0 })).toEqual({ x: 0, z: 0, y: null })
+  })
+
+  it('⚠️ "12abc" NÃO é 12: o jogador iria para onde não digitou', () => {
+    expect(coordenadaDigitada({ x: '12abc', z: '1' })).toBe(null)
+    expect(coordenadaDigitada({ x: '1', z: 'um' })).toBe(null)
+    expect(coordenadaDigitada({ x: '1', z: '1', y: 'alto' })).toBe(null)
+    expect(coordenadaDigitada({ x: '', z: '1' })).toBe(null)
+    expect(coordenadaDigitada({ z: '1' })).toBe(null)
+    expect(coordenadaDigitada()).toBe(null)
+  })
+
+  it('fora do limite do mundo não vai', () => {
+    expect(coordenadaDigitada({ x: String(LIMITE_DA_COORDENADA), z: '0' })).not.toBe(null)
+    expect(coordenadaDigitada({ x: String(LIMITE_DA_COORDENADA + 1), z: '0' })).toBe(null)
+    expect(coordenadaDigitada({ x: '0', z: String(-LIMITE_DA_COORDENADA - 1) })).toBe(null)
+  })
+})
+
+describe('de onde se saiu', () => {
+  it('guarda dimensão e posição, no fim, sem tocar a lista de antes', () => {
+    const antes = []
+    const depois = lembrarDeOndeSaiu(antes, { dimensao: 'nether', x: 1, y: 2, z: 3, vy: 9 })
+    expect(depois).toEqual([{ dimensao: 'nether', x: 1, y: 2, z: 3 }])
+    expect(antes).toEqual([])
+    expect(lembrarDeOndeSaiu(null, { dimensao: 'end', x: 0, y: 0, z: 0 })).toHaveLength(1)
+  })
+
+  it('lembra só as últimas TETO_DO_HISTORICO, e é a mais velha que cai', () => {
+    let h = []
+    for (let i = 0; i < TETO_DO_HISTORICO + 3; i++)
+      h = lembrarDeOndeSaiu(h, { dimensao: 'overworld', x: i, y: 0, z: 0 })
+    expect(h).toHaveLength(TETO_DO_HISTORICO)
+    expect(h[0].x).toBe(3)
+    expect(h.at(-1).x).toBe(TETO_DO_HISTORICO + 2)
+  })
+
+  it('os lugares do mundo têm chave i18n no namespace do painel', () => {
+    expect(LUGARES_DO_MUNDO.map((l) => l.chave)).toEqual([
+      'nascimento',
+      'cama',
+      'vila',
+      'fortaleza',
+    ])
+    for (const l of LUGARES_DO_MUNDO) expect(l.i18n).toMatch(/^roqueCraft\.criativo\./)
   })
 })

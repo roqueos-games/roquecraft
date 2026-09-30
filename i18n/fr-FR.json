@@ -139,7 +139,18 @@
     "doMundo": "Comme le monde veut",
     "limpo": "Ciel dégagé",
     "chovendo": "Il pleut",
-    "neve": "Il neige"
+    "neve": "Il neige",
+    "nascimento": "Apparition",
+    "cama": "Lit",
+    "vila": "Village",
+    "fortaleza": "Forteresse",
+    "coordenada": "Coordonnée",
+    "chao": "sol",
+    "ir": "Aller",
+    "voltar": "Revenir d’où vous venez",
+    "semCama": "Vous n’avez pas encore dormi dans un lit",
+    "semVila": "Cette graine n’a pas de village à proximité",
+    "coordenadaInvalida": "Coordonnée invalide : X et Z entiers, Y facultatif"
   },
   "pause": {
     "credits": "Crédits",

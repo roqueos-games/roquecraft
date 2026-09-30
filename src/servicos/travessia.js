@@ -23,7 +23,12 @@ import {
   chunkKey,
 } from './constants.js'
 import { criarGerador } from './geradores.js'
-import { planoDaTravessia, planoDoTeleporte } from './viagemEntreDimensoes.js'
+import {
+  planoDaTravessia,
+  planoDoTeleporte,
+  planoDoPouso,
+  alturaDaSuperficie,
+} from './viagemEntreDimensoes.js'
 import { ehPortal } from './portal.js'
 import { ehPortalDoFim } from './portalDoFim.js'
 import { POUSO_DA_CHEGADA } from './endWorldgen.js'
@@ -230,7 +235,7 @@ export function criarTravessia(ctx) {
    * @param {string} destino  'overworld' | 'nether' | 'end'
    * @returns {boolean} se foi
    */
-  function irPara(destino) {
+  function irPara(destino, alvo = null) {
     if (atravessando) return false
     if (ctx.emSala?.()) return false
     const de = ctx.dimensaoAtual()
@@ -240,6 +245,8 @@ export function criarTravessia(ctx) {
       ctx.jogador,
       criarLeitorDeDimensao(ctx.semente(), destino, mapaGuardado(destino)),
       POUSO_DA_CHEGADA,
+      16,
+      alvo,
     )
     if (!plano) return false
     atravessando = true
@@ -254,10 +261,43 @@ export function criarTravessia(ctx) {
     }
   }
 
+  /**
+   * Um ponto NA DIMENSÃO DE AGORA (Goal 23, onda 4: lugar, coordenada, volta).
+   *
+   * ⚠️ NÃO É TRAVESSIA, e por isso não passa por `atravessar`: nada se guarda
+   * nem se reconstrói. O leitor lê o mundo VIVO (as edições de agora, por
+   * referência), o pouso é o chão firme mais perto do ponto, e a imunidade é a
+   * mesma da chegada: quem pousa em cima de um portal não é mandado embora
+   * 1,2 s depois sem ter escolhido nada.
+   */
+  function irAte(alvo) {
+    if (atravessando) return false
+    if (ctx.emSala?.()) return false
+    const de = ctx.dimensaoAtual()
+    const leitor = criarLeitorDeDimensao(ctx.semente(), de, ctx.edicoes)
+    // Sem Y, o Y é o chão: no supermundo, o primeiro bloco de cima para baixo
+    // nessa coluna. No Nether e no Fim o primeiro bloco de cima é o teto de
+    // bedrock ou o vazio, e aí vale a altura de agora: o jogador sabe melhor.
+    let y = alvo.y
+    if (y === null || y === undefined) {
+      y =
+        de === 'overworld'
+          ? alturaDaSuperficie(leitor, de, Math.floor(alvo.x), Math.floor(alvo.z))
+          : null
+    }
+    if (y === null) y = ctx.jogador.y
+    const plano = planoDoPouso(de, { ...alvo, y }, leitor)
+    ctx.pousar(plano.pouso)
+    dentroDoPortal = 0
+    imune = true
+    return true
+  }
+
   return {
     passo,
     atravessar,
     irPara,
+    irAte,
     /**
      * Sair do Fim sem portal: quem morre lá renasce no overworld. `false` se
      * o jogador não está no Fim (aí renascer é só renascer).

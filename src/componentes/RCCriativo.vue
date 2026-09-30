@@ -173,6 +173,78 @@
         <p v-if="emSala" class="rc-cri__sub" data-test="rc-cri-sala">
           {{ t('roqueCraft.criativo.naSalaNao') }}
         </p>
+
+        <!-- OS LUGARES DO MUNDO (Goal 23, onda 4). A cama sem cama fica
+             desligada, e não escondida: o jogador lê "ainda não dormi". -->
+        <div class="rc-cri__botoes">
+          <button
+            v-for="l in LUGARES_DO_MUNDO"
+            :key="l.chave"
+            class="rc-cri__chip rc-btn"
+            :disabled="emSala || (l.chave === 'cama' && !temCama)"
+            :data-test="`rc-cri-lugar-${l.chave}`"
+            @click="$emit('lugar', l.chave)"
+          >
+            {{ t(l.i18n) }}
+          </button>
+        </div>
+
+        <!-- A COORDENADA. Três campos e um botão; Enter em qualquer campo é o
+             botão. O Y é opcional: vazio é "o chão". -->
+        <form class="rc-cri__coord" @submit.prevent="irACoordenada">
+          <label class="rc-cri__campo">
+            <span>X</span>
+            <input
+              v-model="coordX"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              data-test="rc-cri-x"
+              :aria-label="`${t('roqueCraft.criativo.coordenada')} X`"
+            />
+          </label>
+          <label class="rc-cri__campo">
+            <span>Y</span>
+            <input
+              v-model="coordY"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              data-test="rc-cri-y"
+              :placeholder="t('roqueCraft.criativo.chao')"
+              :aria-label="`${t('roqueCraft.criativo.coordenada')} Y`"
+            />
+          </label>
+          <label class="rc-cri__campo">
+            <span>Z</span>
+            <input
+              v-model="coordZ"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              data-test="rc-cri-z"
+              :aria-label="`${t('roqueCraft.criativo.coordenada')} Z`"
+            />
+          </label>
+          <button
+            type="submit"
+            class="rc-cri__chip rc-btn"
+            :disabled="emSala"
+            data-test="rc-cri-ir-coordenada"
+          >
+            {{ t('roqueCraft.criativo.ir') }}
+          </button>
+        </form>
+
+        <!-- VOLTAR de onde veio: desligado quando não há de onde. -->
+        <button
+          class="rc-cri__chip rc-btn"
+          :disabled="emSala || !podeVoltar"
+          data-test="rc-cri-voltar"
+          @click="$emit('voltar')"
+        >
+          {{ t('roqueCraft.criativo.voltar') }}
+        </button>
       </section>
 
       <button class="rc-cri__soltar rc-btn" data-test="rc-cri-soltar" @click="$emit('soltar')">
@@ -191,6 +263,7 @@ import {
   ABAS,
   ABA_PADRAO,
   LUGARES,
+  LUGARES_DO_MUNDO,
   abaVizinha,
   HORAS,
   ticksDaFracao,
@@ -212,8 +285,23 @@ const props = defineProps({
   dimensao: { type: String, default: 'overworld' },
   /** Em sala não se atravessa — a dimensão no multijogador é outra fatia. */
   emSala: { type: Boolean, default: false },
+  /** Há de onde voltar: algum teleporte já saiu daqui. */
+  podeVoltar: { type: Boolean, default: false },
+  /** O jogador já dormiu: a cama existe para ir. */
+  temCama: { type: Boolean, default: false },
 })
-const emit = defineEmits(['close', 'hora', 'travar', 'chuva', 'raio', 'soltar', 'teleportar'])
+const emit = defineEmits([
+  'close',
+  'hora',
+  'travar',
+  'chuva',
+  'raio',
+  'soltar',
+  'teleportar',
+  'lugar',
+  'coordenada',
+  'voltar',
+])
 
 const t = useTextos()
 
@@ -260,6 +348,14 @@ const rotuloDoClima = computed(() => {
 
 const mudarHora = (v) => emit('hora', ticksDaFracao(Number(v)))
 const irPara = (ticks) => emit('hora', ticks)
+
+// A coordenada digitada fica como TEXTO até o clique: quem decide se é número
+// é `coordenadaDigitada` (criativo.js), e o painel não tem uma segunda regra.
+const coordX = ref('')
+const coordY = ref('')
+const coordZ = ref('')
+const irACoordenada = () =>
+  emit('coordenada', { x: coordX.value, y: coordY.value, z: coordZ.value })
 </script>
 
 <style scoped lang="scss">
@@ -397,6 +493,41 @@ const irPara = (ticks) => emit('hora', ticks)
     &.is-on {
       background: var(--rc-acao);
       color: var(--rc-acao-texto);
+    }
+  }
+
+  // A COORDENADA: três campos curtos e o botão, numa linha. O campo usa o
+  // mesmo recuo escavado dos slots (`--rc-recuo`), e não uma caixa própria.
+  &__coord {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: var(--ros-space-2, 8px);
+    align-items: end;
+  }
+
+  &__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: var(--ros-text-sm, 12px);
+
+    input {
+      width: 100%;
+      min-width: 0;
+      min-height: 34px;
+      padding: 0 var(--ros-space-2, 8px);
+      border: 2px solid var(--rc-linha);
+      border-radius: 0;
+      background: var(--rc-recuo);
+      color: var(--rc-texto);
+      font-family: ui-monospace, monospace;
+      font-size: var(--ros-text-md, 14px);
+
+      &:focus {
+        outline: none;
+        border-color: var(--rc-acao);
+      }
     }
   }
 

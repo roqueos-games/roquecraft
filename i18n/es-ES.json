@@ -139,7 +139,18 @@
     "doMundo": "Como quiera el mundo",
     "limpo": "Cielo despejado",
     "chovendo": "Lloviendo",
-    "neve": "Nevando"
+    "neve": "Nevando",
+    "nascimento": "Nacimiento",
+    "cama": "Cama",
+    "vila": "Aldea",
+    "fortaleza": "Fortaleza",
+    "coordenada": "Coordenada",
+    "chao": "suelo",
+    "ir": "Ir",
+    "voltar": "Volver a donde estabas",
+    "semCama": "Aún no has dormido en una cama",
+    "semVila": "Esta semilla no tiene aldea cerca",
+    "coordenadaInvalida": "Coordenada inválida: X y Z enteros, Y opcional"
   },
   "pause": {
     "credits": "Créditos",

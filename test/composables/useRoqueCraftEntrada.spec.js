@@ -182,6 +182,25 @@ describe('useRoqueCraftEntrada', () => {
     expect(e.teclas.KeyE).toBeUndefined()
   })
 
+  // GOAL 23, ONDA 4: o painel de criativo ganhou campos de texto (a coordenada).
+  it('⚠️ digitando num campo, a tecla é do campo: o 1 não é slot, o E não é inventário', () => {
+    const { e, telas, verbos } = montar()
+    telas.inventoryOpen.value = true // uma tela aberta, como o painel de criativo
+    const campo = { tagName: 'INPUT', getAttribute: () => 'text' }
+    const um = { ...tecla('Digit1', { key: '1' }), target: campo }
+    e.onKeyDown(um)
+    e.onKeyDown({ ...tecla('KeyE'), target: campo })
+    e.onKeyDown({ ...tecla('KeyF'), target: campo })
+    expect(verbos(), 'a tecla vazou do campo para o jogo').toEqual([])
+    expect(um.preventDefault, 'roubou o dígito de quem digitava').not.toHaveBeenCalled()
+    // O Escape continua sendo da tela: fecha o painel de cima.
+    e.onKeyDown({ ...tecla('Escape'), target: campo })
+    expect(verbos()).toEqual(['fecharTelaDoTopo'])
+    // E fora do campo o mesmo E abre o inventário, como sempre.
+    e.onKeyDown({ ...tecla('KeyE'), target: { tagName: 'CANVAS', getAttribute: () => null } })
+    expect(verbos()).toContain('alternarInventario')
+  })
+
   it('⚠️ Escape desmonta a pilha uma tela por vez, e SÓ pausa no vazio', () => {
     // A queixa do founder (16/09): com o painel do criativo aberto, o Escape
     // abria a PAUSA POR CIMA dele e o painel nunca fechava. A entrada não

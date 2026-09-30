@@ -256,6 +256,7 @@ import { espelho } from './servicos/espelho.js'
 import { resolverColocacao } from './servicos/colocacao.js'
 import { usarItemNaMao } from './servicos/usoDeFerramenta.js'
 import { criarTravessia } from './servicos/travessia.js'
+import { criarLocalizadorDeLugares } from './servicos/lugares.js'
 import { interagirComBloco } from './servicos/interacao.js'
 import { fatorDeEficiencia, bonusDeAfiacao } from './servicos/encantamento.js'
 import { criarPaisagemSonora } from './servicos/paisagemSonora.js'
@@ -586,6 +587,8 @@ const travessia = criarTravessia({
   aoSairDoFim: () => fimDeJogo.saiuDoFim(),
 })
 const collectEdits = mundoVivo.coletar
+// Onde ficam o nascimento, a vila e a fortaleza DESTA semente (menu K, Lugares).
+const lugares = criarLocalizadorDeLugares({ semente: () => seed.value })
 
 // ⚠️ TRES GRUPOS COM NOME, e nao vinte fios soltos: uma entidade vive NUM
 // mundo, interage COM um jogador, dentro de uma PARTIDA.
@@ -1208,8 +1211,14 @@ const criativo = useRoqueCraftCriativo({
   nevando: () => climaAgora.neve > 0.05,
   soltarRaio: () => climaDoJogo.dispararRaio(),
   dimensao: () => world?.dimensao ?? 'overworld',
-  irParaDimensao: (d) => travessia.irPara(d), // a porta é a da TRAVESSIA
-
+  irParaDimensao: (d, alvo = null) => travessia.irPara(d, alvo), // a porta é a da TRAVESSIA
+  irAte: (alvo) => travessia.irAte(alvo),
+  posicao: () => ({ x: player.x, y: player.y, z: player.z }),
+  // Os lugares da semente moram em `lugares.js`; a cama é do save.
+  lugar: (chave) =>
+    chave === 'cama'
+      ? pontoDeRenascimento.value && { dimensao: 'overworld', ...pontoDeRenascimento.value }
+      : (lugares[chave]?.() ?? null),
   emSala: () => mp.active,
   avisar: (c) => notificar({ type: 'info', message: t(c) }),
 })
