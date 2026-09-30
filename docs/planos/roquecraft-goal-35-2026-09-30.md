@@ -397,3 +397,23 @@ payload real pelo mesmo detector do teste: `versao 13`, `itensNoInventario 9`,
 
 Não verificado: gravação com conta de verdade no Firestore de produção. O
 host falso recusa com a mesma mensagem do Firestore, mas é o host falso.
+
+### Onda 0.4: o custo do mesher ganha ledger e régua (30/09/2026)
+
+`qa/bench-mesher.mjs --ledger` mede a mediana de 5 rodadas de 200 seções e
+grava `qa/bench-mesher.json` com data, commit e máquina;
+`test/arquitetura/mesher-medido.spec.js` cobra o ledger pela regra pura de
+`qa/lib/regua-do-mesher.mjs`: existe, tem no máximo 21 dias, e a medição mais
+nova não está mais de 10 % acima da MELHOR anterior da mesma máquina (o piso é
+a melhor, não a última, para uma piora em degraus de 8 % não passar). Outra
+máquina não serve de piso: a primeira medição de uma máquina passa sozinha.
+Para aceitar um mesher mais lento de propósito, apaga-se do ledger a medição
+que servia de piso, no mesmo commit, com o motivo.
+
+Medido: 8 testes verdes (7 da regra com fixtures, 1 do ledger real). Mutantes:
+sem o ledger, o teste do ledger reprova com o comando na mensagem; última
+medição 20 % mais lenta plantada à mão, reprova com "1.206 ms por seção contra
+1.005 ms, teto 1.105 ms". Primeira medição desta máquina (Apple M5 Max):
+1,005 ms por seção, rodadas 1,272 / 0,998 / 1,022 / 0,966 / 1,005, 6.652
+vértices, **com a varredura das sondas rodando ao mesmo tempo**. É um piso
+frouxo de propósito: a próxima medição em máquina quieta baixa o piso sozinha.

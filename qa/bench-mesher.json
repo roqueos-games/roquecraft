@@ -1,0 +1,23 @@
+{
+  "medicoes": [
+    {
+      "quando": "2026-09-30T00:47:26.215Z",
+      "commit": "a33bcab",
+      "maquina": {
+        "plataforma": "darwin",
+        "arquitetura": "arm64",
+        "cpu": "Apple M5 Max",
+        "node": "v22.23.2"
+      },
+      "msPorSecao": 1.005,
+      "rodadas": [
+        1.272,
+        0.998,
+        1.022,
+        0.966,
+        1.005
+      ],
+      "vertices": 6652
+    }
+  ]
+}
