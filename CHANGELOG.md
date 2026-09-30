@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.2 (30/09/2026)
+
+Goal 35, Onda 0: a régua antes do conteúdo. O plano inteiro está em
+`docs/planos/roquecraft-goal-35-2026-09-30.md`.
+
+- **O mundo volta a gravar na conta.** O save v12 tinha lista dentro de lista em quatro
+  lugares (inventário, outras dimensões, efeitos, conteúdo da mobília) e o Firestore recusa:
+  qualquer item na mão, ou o primeiro portal, e o autosave falhava em silêncio. O save v13
+  embrulha toda lista dentro de lista em `{ _a: [...] }` na fronteira (`documentoDoSave.js`) e
+  `parseSave` lê v12 e v13. Três `it.fails` viraram `it`.
+- **Menu K: lugares, coordenada e volta** (Goal 23, onda 4). Nascimento, cama, vila e
+  fortaleza pelo botão; coordenada digitada (Y opcional, vazio é o chão); "Voltar de onde veio"
+  com histórico de 8, em ordem inversa. Só no criativo, fora de sala, com as recusas ditas.
+- **O pouso não aceita mais a copa nem o mato.** `chaoFirme` exige chão que segura (sólido e
+  não folha ou tronco), na travessia a pé e no teleporte; o pouso na mesma dimensão procura
+  primeiro perto da altura pedida.
+- Enquanto o jogador digita num campo do painel, a tecla é do campo (o `1` não troca de slot,
+  o `f` não liga o voo). Só o Escape continua fechando a tela.
+- Régua do mesher (`qa/bench-mesher.json`, `mesher-medido.spec.js`) e varredura das 107 sondas
+  contra este repo (103 verdes, 4 humanas); 13 sondas consertadas pelo que mediam.
+
 ## 0.1.1 (26/09/2026)
 
 Os testes do RoqueOS que ficaram para trás na extração, e as duas sondas de QA que ainda
