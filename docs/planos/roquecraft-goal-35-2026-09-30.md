@@ -371,4 +371,29 @@ o desenho de SDK 0.4.0 do Projeto não foi lido nesta análise.
 
 ## 8. Registro das etapas
 
-(vazio: nada foi executado ainda)
+### Onda 0.1: o save volta a gravar (30/09/2026)
+
+Correção ao §1.4 A: dos quatro `it.fails`, três eram deste defeito
+(`saveNaConta.spec.js:86` e `:177`, `jogoRoqueCraft.spec.js:387`); o quarto
+(`salaComHostFalso.spec.js:283`) é outro achado, o anfitrião com companhia que
+cai e fica na sala como fantasma (`onDisconnect(sala).cancel()` cancela os
+filhos). Continua `it.fails`, e entra na Onda 4.
+
+O conserto é uma regra na fronteira, e não um formato novo em cada
+serializador: `src/servicos/documentoDoSave.js` embrulha toda lista que está
+dentro de lista em `{ _a: [...] }` na ida (`buildSavePayload`, agora v13) e
+desembrulha na volta (`parseSave`, que lê v12 e v13 iguais). Uma regra, porque
+o v12 aninhava em QUATRO lugares (inventário, outras dimensões, efeitos,
+conteúdo da mobília), não em um, e o quinto lugar vai aparecer. O formato em
+memória, o da sala e os testes de cada serializador não mudaram. `_a` e não
+`l`, que o rebanho já usa.
+
+Medido: `yarn verificar` verde, 230 arquivos e 3.516 testes (eram 3.310 `it(`
+por grep; a suíte conta parametrizados). Mutantes, os dois reprovados: sem o
+embrulho na ida, 7 testes vermelhos em 4 arquivos; sem o desembrulho na volta,
+5 vermelhos em 3. A sonda `persistencia` ganhou item no inventário e passa o
+payload real pelo mesmo detector do teste: `versao 13`, `itensNoInventario 9`,
+`listaDentroDeLista null`, `erros []`, varredura verde em 7 s.
+
+Não verificado: gravação com conta de verdade no Firestore de produção. O
+host falso recusa com a mesma mensagem do Firestore, mas é o host falso.

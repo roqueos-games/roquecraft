@@ -479,8 +479,8 @@
     "qa-roquecraft-persistencia": {
       "estado": "verde",
       "exit": 0,
-      "segundos": 6,
-      "quando": "2026-09-18T10:13:58.795Z"
+      "segundos": 7,
+      "quando": "2026-09-30T00:42:16.855Z"
     },
     "qa-roquecraft-pocao": {
       "estado": "verde",

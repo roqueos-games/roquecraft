@@ -8,6 +8,7 @@ import {
 import { CARGA, carregarSave, podeSalvar } from '../../src/servicos/cargaDoSave.js'
 import { criarTravessia, ESPERA_NO_PORTAL } from '../../src/servicos/travessia.js'
 import { ID } from '../../src/servicos/blocks.js'
+import { comListaDentroDeLista } from '../../src/servicos/documentoDoSave.js'
 
 // O MUNDO NA CONTA, SOBRE O `progresso` DO HOST.
 //
@@ -74,16 +75,17 @@ describe('o save na conta, pelo host', () => {
   })
 })
 
-// ⚠️ ACHADO PRÉ-EXISTENTE, MAIOR QUE O DO PORTAL (abaixo), NÃO CONSERTADO: o
-// inventário vai como lista de listas (`serializeInventory`: `[[slot, item,
-// quantidade], …]`), e o Firestore recusa array dentro de array. Medido em
-// 26/09/2026 com o `firebase` 12.7.0 do front, sem rede: `setDoc` com
-// `inventory: [[0, 'wooden_pickaxe', 1]]` lança "Nested arrays are not
-// supported" (o mesmo vale para a mobília com itens, `s: [[item, n]]`). Pela
-// leitura do código, todo save com UM item no inventário falha no RoqueOS. O
-// host falso recusa igual; quando o formato for consertado, a marca sai.
-describe('o save com item no inventário (achado pré-existente, não consertado)', () => {
-  it.fails('um mundo com qualquer item no inventário grava na conta', async () => {
+// ⚠️ ACHADO DE 26/09/2026, CONSERTADO EM 30/09 (save v13): o inventário ia
+// como lista de listas (`serializeInventory`: `[[slot, item, quantidade], …]`),
+// e o Firestore recusa array dentro de array. Medido com o `firebase` 12.7.0 do
+// front, sem rede: `setDoc` com `inventory: [[0, 'wooden_pickaxe', 1]]` lança
+// "Nested arrays are not supported" (o mesmo valia para a mobília com itens,
+// `s: [[item, n]]`). Todo save com UM item no inventário falhava no RoqueOS. O
+// host falso recusa igual, e é ele que prova o conserto: `documentoDoSave.js`
+// embrulha toda lista dentro de lista na fronteira, e o teste abaixo passou de
+// `it.fails` a `it` no mesmo commit do conserto.
+describe('o save com item no inventário (achado de 26/09, consertado no v13)', () => {
+  it('um mundo com qualquer item no inventário grava na conta', async () => {
     const host = conta()
     const save = criarSaveDoRoqueCraft(host.progresso)
     const inventario = Array.from({ length: 36 }, () => null)
@@ -93,14 +95,16 @@ describe('o save com item no inventário (achado pré-existente, não consertado
     ).resolves.toBe(true)
   })
 
-  it('o host diz exatamente o que recusou', async () => {
+  it('sem o embrulho o host recusa, e diz exatamente o quê (é o v12 de antes)', async () => {
+    // A prova de que o host falso faz o papel do Firestore: o mesmo mundo, no
+    // formato v12 (lista dentro de lista), é recusado com o caminho do campo.
     const host = conta()
     const save = criarSaveDoRoqueCraft(host.progresso)
     const inventario = Array.from({ length: 36 }, () => null)
     inventario[0] = { item: 'wooden_pickaxe', count: 1 }
-    await expect(
-      save.saveRoqueCraft(buildSavePayload({ ...base, inventory: inventario })),
-    ).rejects.toThrow(/recusou/)
+    const v12 = comListaDentroDeLista(buildSavePayload({ ...base, inventory: inventario }))
+    expect(v12.inventory).toEqual([[0, 'wooden_pickaxe', 1]])
+    await expect(save.saveRoqueCraft(v12)).rejects.toThrow(/recusou/)
     expect(host.avisosDoHost.join(' ')).toMatch(/inventory\[0\].*array dentro de array/)
     expect(host.progressoGuardado()).toBe(null)
   })
@@ -145,7 +149,7 @@ describe('RC-02 pela ponte: leitura que falhou não grava por cima', () => {
 // este teste mostra. Ele está marcado como "falha esperada": quando o formato
 // for consertado (e o `parseSave` passar a ler os dois), ele passa a passar, o
 // Vitest reprova o `it.fails`, e a marca sai junto com o conserto.
-describe('o save depois do portal (achado pré-existente, não consertado)', () => {
+describe('o save depois do portal (achado de 26/09, consertado no v13)', () => {
   function atravessarUmPortal() {
     const edicoes = new Map([['0,0', new Map([[5, 21]])]])
     let dimensao = 'overworld'
@@ -170,17 +174,19 @@ describe('o save depois do portal (achado pré-existente, não consertado)', () 
     const { dimensao, outras } = atravessarUmPortal()
     expect(dimensao).toBe('nether')
     const payload = buildSavePayload({ ...base, dimensionId: dimensao, outrasDimensoes: outras })
-    expect(payload.outrasDimensoes).toEqual([['overworld', [0, 0, 5, 21]]])
-    expect(Array.isArray(payload.outrasDimensoes[0][1])).toBe(true)
+    // v13: o par `[id, edições]` vai embrulhado, porque o Firestore recusa
+    // lista dentro de lista (`documentoDoSave.js`). Lido de volta, é o par.
+    expect(payload.outrasDimensoes).toEqual([{ _a: ['overworld', { _a: [0, 0, 5, 21] }] }])
+    expect([...parseSave(payload).outrasDimensoes[0][1].get('0,0')]).toEqual([[5, 21]])
   })
 
-  it.fails('depois do primeiro portal, o mundo continua gravando na conta', async () => {
+  it('depois do primeiro portal, o mundo continua gravando na conta', async () => {
     const { dimensao, outras } = atravessarUmPortal()
     const host = conta()
     const save = criarSaveDoRoqueCraft(host.progresso)
     const payload = buildSavePayload({ ...base, dimensionId: dimensao, outrasDimensoes: outras })
-    // Hoje: o host recusa (array dentro de array), a ponte lança, o autosave só
-    // escreve no console, e nada chega à conta.
+    // Até o v12 o host recusava (array dentro de array), a ponte lançava, o
+    // autosave só escrevia no console, e nada chegava à conta.
     await expect(save.saveRoqueCraft(payload)).resolves.toBe(true)
     expect(host.progressoGuardado()?.dimensionId).toBe('nether')
   })

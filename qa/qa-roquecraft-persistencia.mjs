@@ -15,6 +15,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright'
 import { shellDoApp } from './lib/servidor-do-dist.mjs'
+import { ondeHaListaDentroDeLista } from '../src/servicos/documentoDoSave.js'
 
 const DIST = path.resolve('dist/pwa')
 const T = {
@@ -100,12 +101,21 @@ const r = await page.evaluate(async () => {
   await dorme(900)
   const mobsVivos = rc.mobsInfo()
 
+  // UM ITEM NA MÃO. Até o save v12, qualquer item no inventário fazia o
+  // Firestore recusar o documento inteiro (lista dentro de lista), e o mundo
+  // parava de gravar em silêncio. A sonda põe um item e o veredito, do lado do
+  // Node, passa o payload pelo mesmo detector que o teste usa.
+  rc.equipar('coal', 12)
+  await dorme(300)
+
   // O payload REAL do autosave, sem escrever no disco.
   const payload = rc.payloadDeSave()
   return {
     antes,
     gravados: payload.drops,
     versao: payload.version,
+    itensNoInventario: Array.isArray(payload.inventory) ? payload.inventory.length : -1,
+    payloadInteiro: payload,
     // ⚠️ PROVA DE VIDA do lado do rebanho: `semBicho` tem que vir VAZIO. Se
     // vier com coisa dentro, `limparMobs` não limpou e o "gravou 3" abaixo não
     // significa que estes três foram gravados.
@@ -116,7 +126,10 @@ const r = await page.evaluate(async () => {
     vidasGravadas: payload.mobs.map((m) => m.v),
   }
 })
-console.log(JSON.stringify({ ...r, erros }, null, 2))
+// O que o Firestore recusaria: `null` é o único veredito verde.
+const listaDentroDeLista = ondeHaListaDentroDeLista(r.payloadInteiro)
+const resumo = { ...r, payloadInteiro: undefined }
+console.log(JSON.stringify({ ...resumo, listaDentroDeLista, erros }, null, 2))
 await ctx.close()
 await b.close()
 s.close()
@@ -127,5 +140,8 @@ const veredito =
   ['cow', 'pig', 'zombie'].every((t) => r.mobsGravados.includes(t)) &&
   r.mobsGravados.length === r.mobsVivos.length &&
   Number.isFinite(r.versao) &&
+  r.versao >= 13 &&
+  r.itensNoInventario >= 1 &&
+  listaDentroDeLista === null &&
   erros.length === 0
 process.exit(veredito ? 0 : 1)

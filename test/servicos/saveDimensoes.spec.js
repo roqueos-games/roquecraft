@@ -36,7 +36,11 @@ describe('gravar', () => {
     expect(p.version).toBeGreaterThanOrEqual(10)
     expect(p.dimensionId).toBe('nether')
     expect(p.edits).toHaveLength(8)
-    expect(p.outrasDimensoes).toEqual([['overworld', edicoes(3, 4)]])
+    // v13: o par vai embrulhado (`documentoDoSave.js`), porque o Firestore
+    // recusa lista dentro de lista; o `parseSave` devolve o par.
+    expect(p.outrasDimensoes).toEqual([{ _a: ['overworld', { _a: edicoes(3, 4) }] }])
+    expect(parseSave(p).outrasDimensoes).toHaveLength(1)
+    expect(parseSave(p).outrasDimensoes[0][0]).toBe('overworld')
   })
 
   it('o dragão caído grava e volta; save sem o campo diz que ele está vivo', () => {

@@ -20,6 +20,7 @@ import { npcParaSave } from './npc.js'
 import { serializeInventory, deserializeInventory } from './inventory.js'
 import { serializeSurvival, deserializeSurvival } from './survival.js'
 import { efeitosParaSave, efeitosDoSave } from './efeitos.js'
+import { semListaDentroDeLista, comListaDentroDeLista } from './documentoDoSave.js'
 
 /** A dimensão em que todo mundo está hoje. O Nether e o End entram por aqui. */
 export const DIMENSAO_PADRAO = 'overworld'
@@ -234,7 +235,7 @@ export function buildSavePayload({
   mobs,
   dragaoMorto,
 }) {
-  return {
+  return semListaDentroDeLista({
     // v3: entra `mobilia` — o conteúdo de baú e fornalha, que não cabe no
     // `Uint8Array` de id puro do mundo. `parseSave` continua lendo v1 e v2.
     // v4: entra `renascimento` — a cama. Sem ele, dormir grava um ponto que
@@ -273,7 +274,13 @@ export function buildSavePayload({
     // vazia, e é isso que a deixa custar ZERO no save de quem não bebeu nada.
     // v12: entra O ALDEÃO — profissão, estoque, amizade e berço. Ver o comentário
     // dentro de `serializarMobs`: sem eles a vila voltava muda do save.
-    version: 12,
+    // v13: NENHUMA LISTA DENTRO DE LISTA. O v12 tinha quatro (inventário,
+    // outras dimensões, efeitos, conteúdo da mobília) e o Firestore recusa
+    // todas: qualquer item na mão, ou o primeiro portal, e o mundo parava de
+    // gravar na conta em silêncio. A regra é uma só e está em
+    // `documentoDoSave.js`: lista dentro de lista vira `{ _a: [...] }` na ida
+    // (aqui) e volta a lista em `parseSave`, que continua lendo o v12.
+    version: 13,
     worldId: worldId || `w${seed}`,
     dimensionId: dimensionId || DIMENSAO_PADRAO,
     generatorVersion: Number.isFinite(generatorVersion) ? generatorVersion : GERADOR_ATUAL,
@@ -329,7 +336,7 @@ export function buildSavePayload({
     // O rebanho e quem estiver caçando ele.
     mobs: serializarMobs(mobs),
     updatedAt: Date.now(),
-  }
+  })
 }
 
 /**
@@ -392,8 +399,11 @@ export function identidadeDe(salvo, semente) {
   }
 }
 
-export function parseSave(data) {
-  if (!data || typeof data !== 'object') return null
+export function parseSave(documento) {
+  if (!documento || typeof documento !== 'object') return null
+  // v13 chega com `{ _a: [...] }` onde havia lista dentro de lista; v12 e
+  // anteriores chegam sem, e voltam iguais. Depois daqui, um formato só.
+  const data = comListaDentroDeLista(documento)
   const seed = Number.isFinite(data.seed) ? data.seed : 1
   return {
     version: data.version || 1,

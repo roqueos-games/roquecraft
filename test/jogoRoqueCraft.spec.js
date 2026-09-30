@@ -374,17 +374,16 @@ describe('o save na conta, pelo host', () => {
     expect(dados.version).toBeGreaterThanOrEqual(12)
   })
 
-  // ⚠️ ACHADO PRÉ-EXISTENTE, MAIOR QUE O DO PORTAL, NÃO CONSERTADO (o founder
-  // decide o formato): o INVENTÁRIO vai para o save como lista de listas
-  // (`serializeInventory`: `[[slot, item, quantidade], …]`), e o Firestore não
-  // aceita array dentro de array. Medido em 26/09/2026 com o `firebase` 12.7.0
-  // do front, sem rede: `setDoc` com `inventory: [[0, 'wooden_pickaxe', 1]]`
-  // lança "Nested arrays are not supported". Pela leitura do código, todo save
-  // com UM item no inventário falha no RoqueOS (vai para o `aoFalhar`, só
-  // console), e o host falso recusa igual. O mesmo vale para a mobília com
-  // itens (`s: [[item, n]]`). Quando o formato for consertado, este teste passa
-  // a passar e a marca `fails` sai junto.
-  it.fails('com conta, ao fechar, o mundo CHEGA à conta, substituindo o documento', async () => {
+  // ⚠️ ACHADO DE 26/09/2026, CONSERTADO EM 30/09 (save v13): o INVENTÁRIO ia
+  // para o save como lista de listas (`serializeInventory`: `[[slot, item,
+  // quantidade], …]`), e o Firestore não aceita array dentro de array. Medido
+  // com o `firebase` 12.7.0 do front, sem rede: `setDoc` com `inventory: [[0,
+  // 'wooden_pickaxe', 1]]` lança "Nested arrays are not supported". Todo save
+  // com UM item no inventário falhava no RoqueOS (ia para o `aoFalhar`, só
+  // console), e o host falso recusa igual. `documentoDoSave.js` embrulha toda
+  // lista dentro de lista na fronteira; este teste era `it.fails` e passou a
+  // `it` no mesmo commit do conserto.
+  it('com conta, ao fechar, o mundo CHEGA à conta, substituindo o documento', async () => {
     const salvo = { ...buildSavePayload({ seed: 4242, mode: 'creative' }), campoVelho: 'lixo' }
     await montarCom(novoHost({ uid: 'u1', nome: 'Ana', progresso: { salvo } }))
     await bootou()
