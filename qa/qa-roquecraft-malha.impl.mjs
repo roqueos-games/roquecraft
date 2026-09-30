@@ -32,11 +32,11 @@
 // resolve. Chamado com `node`, este arquivo morre no primeiro import -- e ja
 // pareceu sonda com defeito por causa disso.
 
-import { createPipeline } from '../src/services/roquecraft/chunkPipeline.js'
-import { SECTION_COUNT, chunkKey } from '../src/services/roquecraft/constants.js'
-import { neighborsReady } from '../src/services/roquecraft/chunkStore.js'
-import { buildNeighborhood, neighborhoodAccessor } from '../src/services/roquecraft/neighborhood.js'
-import { meshSection } from '../src/services/roquecraft/mesher.js'
+import { createPipeline } from '../src/servicos/chunkPipeline.js'
+import { SECTION_COUNT, chunkKey } from '../src/servicos/constants.js'
+import { neighborsReady } from '../src/servicos/chunkStore.js'
+import { buildNeighborhood, neighborhoodAccessor } from '../src/servicos/neighborhood.js'
+import { meshSection } from '../src/servicos/mesher.js'
 
 const BALDES = ['opaque', 'cutout', 'transparent']
 

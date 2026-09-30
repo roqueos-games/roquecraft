@@ -40,14 +40,14 @@ const SAIDA = path.join(RAIZ, 'scripts', '.qa-ceu', iSaida > 0 ? process.argv[iS
 fs.mkdirSync(SAIDA, { recursive: true })
 
 const { skyPalette, lightRig, sunDirection, moonDirection, moonPhase } = await import(
-  path.join(RAIZ, 'src/services/roquecraft/daycycle.js')
+  path.join(RAIZ, 'src/servicos/daycycle.js')
 )
 
 const COM_VIDA = process.argv.includes('--vida')
 const COM_FOTOS = process.argv.includes('--fotos')
 
 // ── o shader REAL, lido do módulo ──────────────────────────────────────────
-const FONTE = fs.readFileSync(path.join(RAIZ, 'src/services/roquecraft/render/sky.js'), 'utf8')
+const FONTE = fs.readFileSync(path.join(RAIZ, 'src/servicos/render/sky.js'), 'utf8')
 const CRASE = String.fromCharCode(96)
 function bloco(nome) {
   const marca = 'const ' + nome + ' = /* glsl */ '

@@ -120,7 +120,13 @@ const r = await page.evaluate(async () => {
     return {
       dimensionId: p.dimensionId,
       edits: p.edits.length,
-      outras: (p.outrasDimensoes || []).map(([id, l]) => [id, l.length]),
+      // O payload é o DOCUMENTO (save v13): lista dentro de lista vai como
+      // `{ _a: [...] }`, porque o Firestore recusa a lista crua. A sonda lê
+      // as duas formas, a de antes e a de agora.
+      outras: (p.outrasDimensoes || []).map((e) => {
+        const [id, l] = Array.isArray(e) ? e : e._a
+        return [id, (Array.isArray(l) ? l : l._a).length]
+      }),
     }
   })()
 

@@ -53,8 +53,8 @@ const PAGINA = `<!doctype html><html><head><meta charset="utf-8">
 </head><body>
 <script type="module">
 import * as THREE from 'three'
-import { buildMobModel } from '/src/services/roquecraft/render/entities.js'
-import { MOB_TYPES } from '/src/services/roquecraft/mobs.js'
+import { buildMobModel } from '/src/servicos/render/entities.js'
+import { MOB_TYPES } from '/src/servicos/mobs.js'
 
 const cena = new THREE.Scene()
 cena.background = new THREE.Color(0x20242b)

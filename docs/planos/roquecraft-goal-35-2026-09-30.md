@@ -417,3 +417,96 @@ medição 20 % mais lenta plantada à mão, reprova com "1.206 ms por seção co
 1,005 ms por seção, rodadas 1,272 / 0,998 / 1,022 / 0,966 / 1,005, 6.652
 vértices, **com a varredura das sondas rodando ao mesmo tempo**. É um piso
 frouxo de propósito: a próxima medição em máquina quieta baixa o piso sozinha.
+
+### Onda 0.5: o Goal 23 fecha, e o pouso deixa de aceitar a copa (30/09/2026)
+
+**O pouso.** `chaoFirme` (viagemEntreDimensoes.js) passou a exigir chão que
+SEGURA: sólido para a física (`IS_SOLID`; mato e flor não são) e que não é
+copa (`ehCopa`, máscara por id para folha e tronco). Vale para a travessia a
+pé e para o teleporte: era o mesmo defeito nos dois. E `acharPouso` ganhou uma
+`janela` vertical opcional: o pouso na mesma dimensão procura primeiro a 6
+blocos do Y pedido, e só depois a coluna inteira. Sem isso, um tufo de capim
+na coluna do alvo mandava o laço varrer a coluna toda e achar uma caverna a 67
+blocos de fundura antes de olhar a coluna ao lado (medido na semente 1, em
+(300, −201): pouso em y=3 com a superfície em 72).
+
+**Lugares, coordenada, voltar.** `lugares.js` sabe onde ficam nascimento
+(`findSpawn`), vila (espiral de células, a mesma conta que a sonda de aldeia
+usava e agora importa daqui) e fortaleza (a do gerador), por semente, com
+resposta guardada; a cama é do save. `travessia.irAte(alvo)` pousa na
+dimensão de agora sem reconstruir o mundo (leitor sobre as edições vivas;
+sem Y, o Y é a superfície da coluna no supermundo e a altura de agora no
+Nether e no Fim); `irPara(destino, alvo)` atravessa para um ponto pedido em
+vez da coordenada escalada. `useRoqueCraftCriativo` ganhou `irAoLugar`,
+`irACoordenada` e `voltar`, com um histórico de 8 posições (`lembrarDeOndeSaiu`,
+puro) e as recusas ditas: sem cama, semente sem vila, coordenada inválida,
+travessia ocupada, sobrevivência, sala. `coordenadaDigitada` recusa `"12abc"`
+(um `parseInt` aceitaria e o jogador iria para onde não digitou). O painel
+(`RCCriativo`) tem os quatro lugares, os três campos com Enter, e "Voltar"
+desligado quando não há de onde. Dez idiomas: 11 chaves novas em cada.
+
+**O teclado durante a digitação.** O painel ganhou campos de texto, e
+`onKeyDown` ouve a página inteira: digitar `1` em "x=120" trocava para o slot
+1 e `f` ligava o voo. `digitandoEm(el)` (focoDeTela.js, puro) diz se o alvo da
+tecla é um campo, e a entrada devolve a tecla ao campo, menos o Escape.
+
+Medido: 209 testes nos 10 arquivos tocados. Mutantes: a copa voltando a ser
+chão (1 vermelho), a janela do pouso retirada (1 vermelho, depois de o teste
+ganhar a caverna com dois blocos de largura que `chaoFirme` exige: a primeira
+versão do teste deixava o mutante passar), a guarda de digitação retirada (1
+vermelho). Um mutante EQUIVALENTE: `voltar` lembrando a própria volta não muda
+o resultado, porque o histórico é reatribuído a partir da lista capturada
+antes; fica registrado, e não é defeito do teste. Sonda `teleporte` estendida
+(vila pelo botão, coordenada sem Y, duas voltas em ordem inversa, digitar `12`
+no campo com o slot 4 em uso) e o gancho de QA passou a expor `state.hotbar`.
+O primeiro passe da sonda mostrou que um pouso a 434 blocos chega antes dos
+chunks: a física segura o jogador no ar até o chunk dele carregar, e a sonda
+passou a esperar o chão (até 20 s) e a relatar quanto levou.
+
+Onda 5 (busca no inventário criativo) e Onda 6 (trânsito entre menus) do Goal
+23 continuam abertas: entram no próximo ciclo desta onda.
+
+### Onda 0.3: a varredura passa a ser deste repo (30/09/2026)
+
+`node qa/qa-sondas.mjs` inteiro contra o `dist/pwa` de `preparar-dist`, no
+Mac, com a suíte de unidade rodando ao lado: 107 sondas, **90 verdes, 13
+vermelhas, 4 humanas**, 1 h 05 min. Nenhuma das 13 era defeito do jogo; cada
+uma foi lida e consertada pelo que mediu:
+
+- **Caminho do front** (4): `cachoeira.impl`, `malha.impl`, `ceu` e `mobs`
+  importavam `src/services/roquecraft/`. Passaram a `src/servicos/`.
+- **Bandeja de avisos** (2): `dragao` e `fortaleza` contam avisos em
+  `__rosStore.notifications`, que o `preparar-dist` deixava vazia de
+  propósito. `dev/main.js` passou a espelhar `host.avisar` na bandeja quando
+  ela existe (fora das sondas não há `__rosStore`, e nada muda).
+- **Idioma** (1): `interface` trocava a língua por `__ROS_I18N__`, global do
+  front. Agora muda `navigator.language` e dispara `languagechange`, que é o
+  que o host de desenvolvimento ouve e o que um usuário trocando o idioma do
+  sistema faria.
+- **Save v13** (1): `travessia` lia `outrasDimensoes` como par cru; lê as duas
+  formas. Foi a onda 0.1 quebrando a sonda, e a varredura pegou.
+- **RoqueOS ausente** (1): a raiz `qa-roquecraft` fotografava a galeria de
+  jogos, a janela e o dock, que são do front. O `__rosStore` de mentira agora
+  diz `semRoqueOS: true` e a cena é pulada com o motivo no relatório.
+- **Instrumento errado** (3): `tocha` media a razão da silhueta por caixa
+  envolvente de cor, e seis pixels de uma encosta ao sol a 180 px do poste
+  esticavam a caixa (razão 1,45 com a tocha em pé, foto conferida); a caixa
+  passou a excluir o que já tinha cor de tocha na foto sem a peça, com 6 px de
+  folga. `faces` julgava vidro e gelo por "pixels que não são céu", e vidro
+  visto de baixo contra nuvem é céu por definição (2 % a 6 %, foto
+  conferida); o transparente virou INFORMATIVO e o veredito é dos opacos,
+  que é o que o classificador mede. `gravidade` amostrava a areia a cada 25 ms
+  e, com quadro lento, ela pousava antes de ser congelada (3 de 5 rodadas);
+  a amostra é por quadro, com até três quedas, e a tolerância de posição
+  (40 px) era menor que a própria faixa de congelamento (0,6 bloco ≈ 45 px):
+  52 px. Três rodadas seguidas verdes.
+- **Nova sonda** (1): `teleporte`, estendida na 0.5, rodou contra o dist
+  antigo. Verde depois do rebuild.
+
+Ledger final: **107 sondas, 103 verdes, 4 humanas, 0 vermelhas**, todas
+varridas em 30/09 contra este repo. A régua `sondas-varridas.spec.js` vence
+em 21/10. `yarn verificar` verde: 232 arquivos, 3.568 testes.
+
+Não verificado: as sondas rodam em Chromium com swiftshader no Mac; nenhuma
+em aparelho de verdade. As que exigem duas contas no Firebase não existem
+neste repo (o multijogador entre abas é do host de desenvolvimento).

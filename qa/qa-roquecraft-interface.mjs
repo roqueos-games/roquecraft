@@ -178,12 +178,21 @@ const naPausa = await varrer()
 // "Bewegungsunschärfe" ou o japonês com altura de linha diferente. `scrollWidth
 // > clientWidth` é o texto que não coube — o navegador responde, não o olho.
 const IDIOMAS = ['pt-BR', 'en-US', 'de-DE', 'ru-RU', 'ja-JP', 'zh-CN', 'ar-AR', 'hi-IN']
+// ⚠️ NO REPO DO JOGO NÃO HÁ `__ROS_I18N__`: o idioma vem do host, e o host de
+// desenvolvimento lê `navigator.language` e ouve `languagechange`. A sonda faz
+// o que um usuário trocando o idioma do sistema faria: muda a língua do
+// navegador e avisa. O jogo carrega os textos do idioma novo de forma
+// assíncrona, por isso a espera é maior que era no front.
+const trocarIdioma = async (l) => {
+  await page.evaluate((idioma) => {
+    Object.defineProperty(navigator, 'language', { get: () => idioma, configurable: true })
+    window.dispatchEvent(new Event('languagechange'))
+  }, l)
+  await page.waitForTimeout(700)
+}
 const porIdioma = []
 for (const loc of IDIOMAS) {
-  await page.evaluate((l) => {
-    globalThis.__ROS_I18N__.global.locale.value = l
-  }, loc)
-  await page.waitForTimeout(350)
+  await trocarIdioma(loc)
   const r = await page.evaluate(() => {
     const dentro = document.body
     const estourou = []
@@ -201,9 +210,7 @@ for (const loc of IDIOMAS) {
   })
   porIdioma.push({ loc, estouros: r.length, exemplos: r.slice(0, 3) })
 }
-await page.evaluate(() => {
-  globalThis.__ROS_I18N__.global.locale.value = 'pt-BR'
-})
+await trocarIdioma('pt-BR')
 
 // ── 4. PRINTS ───────────────────────────────────────────────────────────────
 // Medida diz que não sobrou ícone Material; não diz se ficou BONITO. As duas

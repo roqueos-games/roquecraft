@@ -501,6 +501,14 @@ await withPage('menu-mobile', { menu: true, mobile: true }, async (page) => {
 })
 
 await withPage('galeria', { semJogo: true }, async (page) => {
+  // ⚠️ A GALERIA, A JANELA E O DOCK SÃO DO ROQUEOS. Contra o `dist/pwa` deste
+  // repo (`qa/lib/preparar-dist.mjs`) não há RoqueOS: o `__rosStore` é de
+  // mentira e diz isso. A cena é pulada, e o relatório registra por quê; a
+  // prova de que o cartão e o ícone aparecem no RoqueOS é do front.
+  if (await page.evaluate(() => !!window.__rosStore?.semRoqueOS)) {
+    report.at(-1).pulado = 'galeria, janela e dock são do RoqueOS; sem RoqueOS neste dist'
+    return
+  }
   await page.evaluate(() => window.__rosStore.openWindow('games'))
   await page.waitForSelector('.ros-games', { timeout: 30000 })
   await settle(page, 2000)

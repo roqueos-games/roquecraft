@@ -95,10 +95,18 @@ await page.addStyleTag({ content: SEM_HUD })
 // ── CENA: um bloco de cada tipo, sozinho no ar, bem acima do terreno ───────
 // Alto o bastante pra que o horizonte fique ABAIXO dele em toda órbita: assim
 // o fundo é sempre céu liso e a silhueta é fácil de separar.
+// ⚠️ O VEREDITO É DOS OPACOS. A medida é "quantos pixels da caixa NÃO são céu":
+// um bloco transparente deixa o céu passar por definição, e a fração dele
+// depende do que há atrás e da cor do céu, não de faltar face. Em 30/09, com o
+// céu encoberto e branco do dist deste repo, o vidro visto de baixo deu 2 % a
+// 6 % (a mesma foto nas duas datas, a olho: um vidro quase invisível contra
+// nuvem) e a sonda acusou face faltando onde não faltava nada. Vidro e gelo
+// continuam fotografados e medidos, como INFORMATIVO; quem julga face é o
+// opaco, que é o que o classificador consegue julgar.
 const ALVOS = [
   { key: 'stone', x: 40, y: 100, z: 0 },
-  { key: 'ice', x: 40, y: 100, z: 24 },
-  { key: 'glass', x: 40, y: 100, z: 48 },
+  { key: 'ice', x: 40, y: 100, z: 24, transparente: true },
+  { key: 'glass', x: 40, y: 100, z: 48, transparente: true },
   { key: 'oakLog', x: 40, y: 100, z: 72 },
 ]
 
@@ -221,14 +229,17 @@ for (const alvo of ALVOS) {
     const fracoes = medidas.filter((m) => m.fracao !== undefined).map((m) => m.fracao)
     const min = Math.min(...fracoes)
     const max = Math.max(...fracoes)
+    const julgamento = min < max * 0.55 ? 'ASSIMETRICO' : min < 0.35 ? 'FRACO' : 'OK'
     relatorio.push({
       bloco: alvo.key,
       elevacao: el.nome,
       min,
       max,
       // Uma face faltando faz a silhueta despencar naquele azimute. Bloco opaco
-      // sólido tem que cobrir quase a mesma área de todo ângulo.
-      veredito: min < max * 0.55 ? 'ASSIMETRICO' : min < 0.35 ? 'FRACO' : 'OK',
+      // sólido tem que cobrir quase a mesma área de todo ângulo. O transparente
+      // é medido e anotado, e não julgado (ver `ALVOS`).
+      veredito: alvo.transparente ? 'INFORMATIVO' : julgamento,
+      medida: alvo.transparente ? julgamento : undefined,
       medidas,
     })
   }
@@ -240,7 +251,10 @@ console.log(
   JSON.stringify(
     {
       erros: errors.length,
-      resumo: relatorio.map((r) => `${r.bloco}/${r.elevacao}: ${r.veredito} (${r.min}..${r.max})`),
+      resumo: relatorio.map(
+        (r) =>
+          `${r.bloco}/${r.elevacao}: ${r.veredito}${r.medida ? ` [${r.medida}]` : ''} (${r.min}..${r.max})`,
+      ),
     },
     null,
     2,
@@ -249,5 +263,10 @@ console.log(
 await browser.close()
 server.close()
 // O veredito sai pelo código de saída: o ledger de sondas lê ISSO, não a prosa.
-// Face FRACA ou ASSIMÉTRICA em qualquer bloco/elevação reprova.
-process.exit(relatorio.every((r) => r.veredito === 'OK') && errors.length === 0 ? 0 : 1)
+// Face FRACA ou ASSIMÉTRICA em qualquer bloco OPACO reprova; o transparente é
+// informativo. E o opaco TEM que ter sido julgado: um relatório só de
+// INFORMATIVO não é verde.
+const opacos = relatorio.filter((r) => r.veredito !== 'INFORMATIVO')
+process.exit(
+  opacos.length > 0 && opacos.every((r) => r.veredito === 'OK') && errors.length === 0 ? 0 : 1,
+)

@@ -27,6 +27,10 @@ await build({ root: raiz, logLevel: 'warn', build: { outDir: saida, emptyOutDir:
 // sonda que conta aviso na bandeja não tem o que contar aqui.
 const SHIM = `<script>
   window.__rosStore = {
+    // Diz às sondas que aqui não há RoqueOS: a galeria de jogos, a janela e o
+    // dock são do front, e a cena que os fotografa se pula em vez de esperar
+    // 30 s por um seletor que nunca vem.
+    semRoqueOS: true,
     windows: [{ id: 'roquecraft', appId: 'roquecraft' }],
     notifications: [],
     openWindow() { return { id: 'roquecraft' } },

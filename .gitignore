@@ -5,3 +5,4 @@ dist/
 scripts/.qa-*/
 .DS_Store
 *.log
+qa-out/

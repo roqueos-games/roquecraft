@@ -215,22 +215,43 @@ const voo = await page.evaluate(
     // seguiu medindo o nada — projetou altura 0, recortou fora da tela e
     // devolveu área NEGATIVA. Por isso a existência é CONFERIDA aqui.
     const alto = Math.min(y + 20, 126)
-    rc.fill(-6, alto, -6, -6, alto, -6, 'sand')
-    const nasceu = rc.blocoEm(-6, alto, -6)
-    const amostras = []
-    for (let i = 0; i < 150; i++) {
-      const q = rc.quedasInfo()
-      amostras.push({ noAr: q.noAr, malhas: q.malhas, alturas: q.alturas })
-      const h = q.alturas[0]
-      if (h != null && h <= altura + 0.6) break
-      await espera(25)
+    const quadro = () => new Promise((r) => requestAnimationFrame(() => r()))
+    // ⚠️ A ARMADILHA TEM QUE FECHAR NUM QUADRO EM QUE A AREIA ESTÁ NA FAIXA. Com
+    // amostra a cada 25 ms e quadro lento (swiftshader sob carga), a areia
+    // passava da faixa de 0,6 bloco entre duas amostras e POUSAVA antes de ser
+    // congelada: `noAr 0`, "nada a medir", vermelho sem defeito nenhum (30/09,
+    // três de cinco rodadas). Agora a amostra é por quadro (é no quadro que a
+    // areia anda), e se mesmo assim ela pousar antes, a queda é REFEITA, até
+    // três vezes. Refazer a medida não é afrouxar o critério: o critério (a
+    // areia no ar não é um cubo preto) continua sendo julgado na foto.
+    let nasceu = null
+    let amostras = []
+    let tentativas = 0
+    for (; tentativas < 3; tentativas++) {
+      rc.fill(-6, alto, -6, -6, alto, -6, 'sand')
+      nasceu = rc.blocoEm(-6, alto, -6)
+      amostras = []
+      for (let i = 0; i < 900; i++) {
+        const q = rc.quedasInfo()
+        amostras.push({ noAr: q.noAr, malhas: q.malhas, alturas: q.alturas })
+        const h = q.alturas[0]
+        if (h != null && h <= altura + 0.6) break
+        if (i > 3 && q.noAr === 0) break // pousou antes de ser pega
+        await quadro()
+      }
+      rc.congelarQuedas(true)
+      if (rc.quedasInfo().noAr > 0) break
+      // Pousou: tira a areia pousada e solta de novo.
+      rc.congelarQuedas(false)
+      rc.fill(-6, altura, -6, -6, altura, -6, 'air')
+      await espera(400)
     }
-    rc.congelarQuedas(true)
     const q = rc.quedasInfo()
     return {
       amostras: amostras.slice(-14),
       alto,
       nasceu,
+      tentativas: tentativas + 1,
       chegou: q.alturas[0] ?? null,
       noAr: q.noAr,
     }
@@ -372,7 +393,12 @@ const veredito = {
     !!pousada.media &&
     pousada.mudou > 300 &&
     distanciaEntreCentros != null &&
-    distanciaEntreCentros < 40 &&
+    // ⚠️ A TOLERÂNCIA TEM QUE CABER A FAIXA DE CONGELAMENTO. A armadilha fecha
+    // com a areia até 0,6 bloco acima do pouso, e a esta distância da câmera um
+    // bloco são ~75 px: 40 px eram 0,53 bloco, MENOS que a faixa, e a sonda
+    // reprovava ou passava conforme o quadro em que a armadilha fechou (30/09:
+    // 41 px, com a mesma areia e a mesma cor). A faixa inteira mais folga: 52.
+    distanciaEntreCentros < 52 &&
     Math.abs(caindo.media[0] - pousada.media[0]) < 30 &&
     Math.abs(caindo.media[1] - pousada.media[1]) < 30 &&
     Math.abs(caindo.media[2] - pousada.media[2]) < 30,

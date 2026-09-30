@@ -23,10 +23,10 @@
 //   node scripts/qa-roquecraft-cachoeira.mjs
 //
 import { chromium } from 'playwright'
-import { createNoiseContext, generateChunkData } from '../src/services/roquecraft/worldgen.js'
-import { WORLD_HEIGHT, localIndex, AIR } from '../src/services/roquecraft/constants.js'
-import { AGUA_CAINDO } from '../src/services/roquecraft/cachoeiraDeMontanha.js'
-import { ehQueda, alturaDaColuna, ALTURA_MINIMA } from '../src/services/roquecraft/cachoeira.js'
+import { createNoiseContext, generateChunkData } from '../src/servicos/worldgen.js'
+import { WORLD_HEIGHT, localIndex, AIR } from '../src/servicos/constants.js'
+import { AGUA_CAINDO } from '../src/servicos/cachoeiraDeMontanha.js'
+import { ehQueda, alturaDaColuna, ALTURA_MINIMA } from '../src/servicos/cachoeira.js'
 import { servirDist } from './lib/servidor-do-dist.mjs'
 
 const SEMENTE = 942457

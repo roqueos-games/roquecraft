@@ -321,7 +321,33 @@ const comTocha = await foto('2-tocha-de-chao.png')
 // do clarão dela.
 const ehCorDeTocha = (r, g, b) => (r - b > 62 && r > 120) || (r > 238 && g > 222 && r - b > 26)
 
-function caixaDaCor(png, janela) {
+/**
+ * A caixa dos pixels com cor de tocha na janela. Com `cena` (a MESMA moldura
+ * sem a peça), um pixel só conta se a cor de tocha NÃO estava lá antes.
+ *
+ * ⚠️ SEM ISSO A CAIXA ERA DA PAISAGEM. Em 30/09 a razão deu 1,45 com a tocha
+ * perfeitamente em pé: seis pixels de uma encosta ao sol, a 180 px à esquerda
+ * do poste, passaram no classificador de cor nas duas fotos e esticaram a
+ * caixa para 222 px de largura. A prova de vida (`corSemTocha`, 6 px contra
+ * 4.668) deixou passar, porque seis pixels são nada em contagem e são tudo
+ * numa caixa envolvente. O que é da cena fica fora da silhueta.
+ */
+const FOLGA_DA_CENA = 6
+function cenaTemCorDeTochaPerto(cena, x, y) {
+  for (let dy = -FOLGA_DA_CENA; dy <= FOLGA_DA_CENA; dy++) {
+    const yy = y + dy
+    if (yy < 0 || yy >= cena.height) continue
+    for (let dx = -FOLGA_DA_CENA; dx <= FOLGA_DA_CENA; dx++) {
+      const xx = x + dx
+      if (xx < 0 || xx >= cena.width) continue
+      const i = (cena.width * yy + xx) << 2
+      if (ehCorDeTocha(cena.data[i], cena.data[i + 1], cena.data[i + 2])) return true
+    }
+  }
+  return false
+}
+
+function caixaDaCor(png, janela, cena = null) {
   let x0 = 1e9
   let y0 = 1e9
   let x1 = -1e9
@@ -331,6 +357,10 @@ function caixaDaCor(png, janela) {
     for (let x = Math.max(0, janela.x0); x < Math.min(png.width, janela.x1); x++) {
       const i = (png.width * y + x) << 2
       if (!ehCorDeTocha(png.data[i], png.data[i + 1], png.data[i + 2])) continue
+      // A cena não é pixel a pixel: entre as duas fotos o sol andou e a encosta
+      // deslocou meio bloco. O que estava com cor de tocha a até FOLGA px na
+      // foto sem a peça é cena, não tocha.
+      if (cena && cenaTemCorDeTochaPerto(cena, x, y)) continue
       n++
       if (x < x0) x0 = x
       if (x > x1) x1 = x
@@ -342,7 +372,7 @@ function caixaDaCor(png, janela) {
   return { pixels: n, largura: x1 - x0 + 1, altura: y1 - y0 + 1, x0, y0, x1, y1 }
 }
 
-const silhueta = caixaDaCor(comTocha, janela)
+const silhueta = caixaDaCor(comTocha, janela, vazio)
 // O clarão continua sendo medido, mas com o nome certo: é a luz que a peça
 // joga em volta, e ela também é um recurso que pode quebrar sozinho.
 const clarao = caixaDaDiferenca(vazio, comTocha, janela, 8)
