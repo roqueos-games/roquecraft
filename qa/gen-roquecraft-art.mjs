@@ -1,36 +1,16 @@
-// RoqueCraft — arte de capa, fundo do menu e ícones. TUDO autoral.
-//
-// Por que este arquivo existe: a regra 36-games manda a capa de jogo nativo ser
-// frame de gameplay real. O founder revogou a regra PARA ESTE JOGO em
-// 2026-08-20 e pediu key art ilustrada (registrado em 36-games.md). Então a
-// arte é DESENHADA — não é screenshot com filtro.
-//
-// Como é desenhada: um renderizador isométrico mínimo (dentro deste arquivo)
-// recebe uma cena declarada em voxels e emite SVG. Cada cubo vira três
-// polígonos (topo, esquerda, direita) com a mesma paleta do jogo. É a mesma
-// linguagem visual do RoqueCraft, mas COMPOSTA — ilha flutuante, cachoeira,
-// casa, árvore, silhueta de montanha ao fundo, hora dourada.
-//
-// O SVG é rasterizado pelo Chromium do Playwright (o mesmo que o harness de QA
-// já usa) — sem dependência nova.
-//
-// Uso: node scripts/gen-roquecraft-art.mjs
-// Saída (committada):
-//   public/games/covers/roquecraft.jpg        capa da galeria (1024×642)
-//   public/games/roquecraft/art/menu-bg.jpg   fundo do menu/boot (1920×1080)
-//   public/games/roquecraft/icon.svg          ícone vetorial (dock, 24-32px)
-//   public/games/roquecraft/icon.png          ícone renderizado (512px, alpha)
+// RoqueCraft — verificação da key art promocional importada.
+// A arte final usa geração de imagens integrada sob direção RoqueOS (12/10/2026).
+// arte/manifesto.json registra prompts, fontes e SHA-256 de cada exportação.
+// Uso: node qa/gen-roquecraft-art.mjs — valida sem escrever nem rasterizar.
+// As funções procedurais abaixo são referências legadas; não geram a arte publicada.
 
-import { writeFileSync, mkdirSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { resolve, dirname, relative, isAbsolute } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chromium } from 'playwright'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(HERE, '..')
-const COVERS = resolve(ROOT, 'public/games/covers')
-const ART = resolve(ROOT, 'public/games/roquecraft/art')
-const GAME = resolve(ROOT, 'public/games/roquecraft')
 
 // ── projeção isométrica ─────────────────────────────────────────────────────
 // Cubo de lado 1 vira um hexágono: topo em losango, duas laterais em
@@ -279,9 +259,8 @@ function marDeNuvens(W, H, base) {
   return out.join('')
 }
 
-// Exportada porque o gerador de herói (`gen-game-heroes.mjs`) precisa da MESMA
-// cena renderizada em 1920 de largura. Ampliar a capa de 1024 dava um herói
-// mole; chamar a cena de novo dá pixel de verdade.
+// Cena procedural legada preservada como biblioteca para referências históricas.
+// A capa e o herói atuais vêm das fontes de arte/manifesto.json.
 export function keyart({ W, H }) {
   // Composição: o assunto denso fica no CENTRO-DIREITA porque o hero da galeria
   // recorta com object-position: 62% center — a coluna esquerda vive sob o
@@ -405,7 +384,7 @@ export function keyart({ W, H }) {
 // ── ícone ───────────────────────────────────────────────────────────────────
 // Cubo de grama de três faces. O SVG é o ícone de sistema (leve, nítido a
 // 24px); o PNG é o mesmo desenho com grão e cantos, pros tamanhos grandes.
-function iconeSvg({ detalhe = false } = {}) {
+export function iconeSvg({ detalhe = false } = {}) {
   const S = 512
   const cx = S / 2
   const w = 196 // meia largura do losango
@@ -469,66 +448,48 @@ function iconeSvg({ detalhe = false } = {}) {
 </svg>`
 }
 
-// ── rasterização ────────────────────────────────────────────────────────────
-async function raster(page, svg, { W, H, path, type = 'jpeg', quality = 90, escala = 2 }) {
-  await page.setViewportSize({ width: W, height: H })
-  await page.setContent(
-    `<html><body style="margin:0;background:${type === 'png' ? 'transparent' : '#0b1622'}">${svg}</body></html>`,
-    { waitUntil: 'load' },
-  )
-  await page.evaluate(() => document.fonts?.ready)
-  const opts = { path, clip: { x: 0, y: 0, width: W, height: H } }
-  if (type === 'jpeg') Object.assign(opts, { type: 'jpeg', quality })
-  else Object.assign(opts, { type: 'png', omitBackground: true })
-  await page.screenshot(opts)
-  console.log(
-    `  ${path.split('/').slice(-2).join('/')} (${W}×${H}${escala > 1 ? ` @${escala}x` : ''})`,
-  )
+// ── verificação não destrutiva da arte importada ─────────────────────────────
+export function validarArteImportada(raiz = ROOT) {
+  const meta = JSON.parse(readFileSync(resolve(raiz, 'arte/manifesto.json'), 'utf8'))
+  const obrigatorias = [
+    'public/capa.jpg',
+    'public/icone.svg',
+    'public/games/roquecraft/icon.png',
+    'public/games/roquecraft/icon.svg',
+    'public/games/roquecraft/art/menu-bg.jpg',
+  ]
+  if (!meta.origem || !meta.fonte?.capa || !meta.fonte?.icone || !meta.exportacoes)
+    throw new Error('Proveniência incompleta em arte/manifesto.json')
+  for (const arquivo of obrigatorias)
+    if (!meta.exportacoes[arquivo]) throw new Error(`Exportação sem registro: ${arquivo}`)
+
+  const registros = []
+  for (const tipo of ['capa', 'icone']) {
+    const fonte = meta.fonte[tipo]
+    if (!fonte.prompt?.trim()) throw new Error(`Prompt ausente: ${tipo}`)
+    registros.push([`arte/${fonte.arquivo}`, fonte.sha256])
+  }
+  registros.push(...Object.entries(meta.exportacoes))
+  for (const [arquivo, esperado] of registros) {
+    if (typeof arquivo !== 'string' || !/^[a-f0-9]{64}$/.test(esperado))
+      throw new Error(`Registro SHA-256 inválido: ${arquivo}`)
+    const caminho = resolve(raiz, arquivo)
+    const local = relative(raiz, caminho)
+    if (isAbsolute(arquivo) || local.startsWith('..'))
+      throw new Error(`Caminho fora do repositório: ${arquivo}`)
+    const atual = createHash('sha256').update(readFileSync(caminho)).digest('hex')
+    if (atual !== esperado) throw new Error(`SHA-256 divergente: ${arquivo}`)
+  }
+  return registros.length
 }
 
-async function main() {
-  mkdirSync(COVERS, { recursive: true })
-  mkdirSync(ART, { recursive: true })
-  mkdirSync(GAME, { recursive: true })
-
-  // o SVG do ícone é arquivo de verdade (é ele que o dock carrega)
-  writeFileSync(resolve(GAME, 'icon.svg'), iconeSvg())
-  console.log('  public/games/roquecraft/icon.svg')
-
-  const browser = await chromium.launch()
-  const page = await browser.newPage({ deviceScaleFactor: 2 })
-
-  // capa da galeria: mesma proporção das outras (1024×642 ≈ 1.6:1)
-  await raster(page, keyart({ W: 1024, H: 642 }), {
-    W: 1024,
-    H: 642,
-    path: resolve(COVERS, 'roquecraft.jpg'),
-  })
-
-  // fundo do menu/boot: 16:9 pra caber em qualquer janela
-  await raster(page, keyart({ W: 1920, H: 1080 }), {
-    W: 1920,
-    H: 1080,
-    path: resolve(ART, 'menu-bg.jpg'),
-    quality: 86,
-  })
-
-  // ícone grande com grão, alpha preservado
-  await raster(page, iconeSvg({ detalhe: true }), {
-    W: 512,
-    H: 512,
-    path: resolve(GAME, 'icon.png'),
-    type: 'png',
-  })
-
-  await browser.close()
-  console.log('[roquecraft] arte gerada')
+// Importar as referências legadas não dispara verificação nem escrita.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    const quantidade = validarArteImportada()
+    console.log(`[roquecraft] ${quantidade} fontes/exportações conferidas; arte preservada`)
+  } catch (erro) {
+    console.error(`[roquecraft] ${erro.message}`)
+    process.exitCode = 1
+  }
 }
-
-// Só executa quando chamado direto. Sem esta guarda, importar `keyart` daqui
-// dispararia a geração inteira da arte do RoqueCraft como efeito colateral.
-if (import.meta.url === `file://${process.argv[1]}`)
-  main().catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })

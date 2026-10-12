@@ -1,0 +1,22 @@
+{
+  "origem": "Key art promocional criada com geração de imagens integrada sob direção RoqueOS, 12/10/2026.",
+  "fonte": {
+    "capa": {
+      "arquivo": "fontes/capa.png",
+      "sha256": "d48388aef033b3a72142ac927eaf85aa89129c91b0332a7ee081cd6765bf48da",
+      "prompt": "Use case: style-transfer. Transform this existing original RoqueCraft key art into a beautiful premium tactile voxel 3D illustration, landscape 16:10 high resolution. Keep its defining subject: a floating island made of crisp cubic grass/soil/stone blocks, blocky leafy green trees, a small cozy wooden cabin with a terracotta stepped pitched roof and softly glowing amber window, blue water flowing across the island into a waterfall. Preserve all straight cubical geometry; upgrade with attractive detailed voxel materials, sunlit green tops, rich earthy sides, clean bevel highlights only subtly, excellent ambient occlusion and physically convincing translucent blue water while still block-based. Sophisticated golden-hour sunlight, airy blue sky, layers of far misty floating islands and clouds, sense of discovery and building. Main island center at x=65%, cabin and trees centered vertically in y=25%-65%, complete readable silhouette and enough breathing space. Leftmost 32% is open sky/depth for interface text, no important objects there. Cinematic yet cheerful color, premium art direction, not crude flat vector geometry. NO text, no logo, no UI, no border, no famous game characters, no creepers, no weapons or extra characters. Composition must work in wide hero and card crop."
+    },
+    "icone": {
+      "arquivo": "fontes/icone.png",
+      "sha256": "87c5f2b75dc5ce664d15869d547d29b6dbba4c374ecb10233fed519a88d43613",
+      "prompt": "Use case: style-transfer. Redesign this original RoqueCraft voxel grass block app icon as a premium tactile 3D rendered icon. Square 1024x1024 canvas with genuinely transparent background. Preserve one large isometric cubical grass-and-earth block, simple instantly readable silhouette. Bright meadow-green top has clearly crafted few large pixel/voxel patches, thick vivid grass overhang around upper edge, warm brown soil sides with 4-6 restrained square stone inclusions and darker lower stone strata. Subtle chamfered edges and beautiful warm upper-left sunlight, soft sky fill, refined ambient occlusion at grass lip. A tiny cluster of just 3 differently tall green voxel grass sprigs at rear corner is okay, but no trees, house, pickaxe, tools, characters or mini landscape. Icon fills 82% canvas with clean sharp cubical geometry. Premium handcrafted game collectible material, not plastic toy gloss, not a flat vector, not photoreal individual grass blades. No background tile, no cast shadow outside block, no text, no logo, no checkerboard painted behind."
+    }
+  },
+  "exportacoes": {
+    "public/capa.jpg": "b9ab4e42d9295b8520462cfda758bb90e7152e408d310cb05fcc426f5c13b9c7",
+    "public/icone.svg": "7964d19c5d28c98ce676f1ed18438b6facb5a84a1e0fddf38aff9a748c21f064",
+    "public/games/roquecraft/icon.png": "06f505f933dc24083837fe2f7e7920646025cf1c334552e2604586689afbc7e1",
+    "public/games/roquecraft/icon.svg": "7964d19c5d28c98ce676f1ed18438b6facb5a84a1e0fddf38aff9a748c21f064",
+    "public/games/roquecraft/art/menu-bg.jpg": "753a73d83beb33a8f1d2084e6032faa8b609177ba2c969a40d157d5bfb962721"
+  }
+}
