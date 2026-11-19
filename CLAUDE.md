@@ -3,6 +3,7 @@
 Jogo da organização roqueos-games, montado pelo RoqueOS através do `jogo-sdk`. Leia o
 README antes de mudar qualquer coisa. A regra de arquitetura, os planos e o dev-doc que o jogo
 tinha no RoqueOS estão em `docs/` (os caminhos citados neles são os do front).
+A documentação começa em `docs/INDEX.md` (inglês; o par em português em `docs/pt-BR/`).
 
 - Gate: `yarn verificar` (o mesmo do CI e do pre-push).
 - O jogo só importa `vue`, `three` (e `three/examples/jsm/...`) e `qrcode` (peers: o RoqueOS
