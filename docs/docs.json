@@ -1,0 +1,108 @@
+{
+  "principal": "en",
+  "par": "pt-BR",
+  "documentos": [
+    {
+      "papel": "readme",
+      "principal": "README.md",
+      "par": "README.pt-BR.md"
+    },
+    {
+      "papel": "indice",
+      "principal": "docs/INDEX.md",
+      "par": "docs/pt-BR/INDEX.md"
+    },
+    {
+      "papel": "comecar",
+      "principal": "docs/GETTING-STARTED.md",
+      "par": "docs/pt-BR/COMECAR.md"
+    },
+    {
+      "papel": "arquitetura",
+      "principal": "docs/ARCHITECTURE.md",
+      "par": "docs/pt-BR/ARQUITETURA.md"
+    },
+    {
+      "papel": "referencia",
+      "principal": "docs/REFERENCE.md",
+      "par": "docs/pt-BR/REFERENCIA.md"
+    },
+    {
+      "papel": "operacao",
+      "principal": "docs/OPERATIONS.md",
+      "par": "docs/pt-BR/OPERACAO.md"
+    },
+    {
+      "papel": "quando-quebra",
+      "principal": "docs/WHEN-IT-BREAKS.md",
+      "par": "docs/pt-BR/QUANDO-QUEBRA.md"
+    },
+    {
+      "papel": "glossario",
+      "principal": "docs/GLOSSARY.md",
+      "par": "docs/pt-BR/GLOSSARIO.md"
+    },
+    {
+      "papel": "estender",
+      "principal": "docs/EXTENDING.md",
+      "par": "docs/pt-BR/ESTENDER.md"
+    },
+    {
+      "papel": "integracoes",
+      "principal": "docs/INTEGRATIONS.md",
+      "par": "docs/pt-BR/INTEGRACOES.md"
+    },
+    {
+      "papel": "testes",
+      "principal": "docs/TESTING.md",
+      "par": "docs/pt-BR/TESTES.md"
+    },
+    {
+      "papel": "decisoes",
+      "principal": "docs/DECISIONS.md",
+      "par": "docs/pt-BR/DECISOES.md"
+    },
+    {
+      "papel": "contribuir",
+      "principal": "CONTRIBUTING.md",
+      "par": "docs/pt-BR/CONTRIBUTING.md"
+    }
+  ],
+  "dispensas": {},
+  "historico": {
+    "docs/README.md": "nota de proveniência dos documentos importados do roqueos-front na extração de 26/09/2026, com a tradução dos caminhos; registro de época, em português, sem par de propósito",
+    "docs/regras/44-roquecraft-arquitetura.md": "cópia sem mudar uma letra da rule 44 do roqueos-front (conferida pelo hash do git), citada pela rule 36 do front e pelo contexto do kit; o que vale hoje está em docs/ARCHITECTURE.md",
+    "docs/dev-docs/roquecraft-v2.md": "dev-doc do RoqueCraft v2 copiado sem mudança do roqueos-front e citado pela rule 36 de lá; registro das armadilhas de shader de 19/08/2026, com os caminhos do front",
+    "docs/planos/goal19-execucao.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/goal19-fechamento.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/goal19-vilas-e-castelos.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/goal20-a-cidade-viva.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-agua-e-vida.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-ceu.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-clima-para-composable.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-conclusao-java-codex.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-2026-09.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-21-2026-09-18.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-22-2026-09-19.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-23-2026-09-19.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-35-2026-09-30.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-goal-onda3-2026-09-13.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-interface.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-loop.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-onda5.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-passo-e-fisica.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-personagens.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-plano-2026-09-12.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada10.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada11.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada12.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada13.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada14.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada15.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada6.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada7.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada8.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva",
+    "docs/planos/roquecraft-rodada9.md": "plano de desenvolvimento copiado sem mudança do roqueos-front na extração de 26/09/2026; registro de como o jogo foi pensado, com os caminhos do front, não documentação viva"
+  },
+  "fora": {}
+}
