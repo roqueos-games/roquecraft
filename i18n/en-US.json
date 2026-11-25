@@ -108,7 +108,7 @@
     "retry": "Try again",
     "context": "The GPU dropped the game context. Close other 3D windows and try again.",
     "quality": "Could not change quality",
-    "saveIndisponivel": "Couldn't read your saved world. It's still stored — the game won't overwrite it. Reload to try again."
+    "saveIndisponivel": "Couldn't read your saved world. It's still stored, and the game won't overwrite it. Reload to try again."
   },
   "hud": {
     "health": "Health",
