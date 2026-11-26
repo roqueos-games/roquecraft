@@ -1,38 +1,47 @@
-# Como contribuir
+# Contributing
 
-Obrigado por querer ajudar. A régua é a mesma para todo mundo, inclusive para quem mantém.
+_English | [Português](docs/pt-BR/CONTRIBUTING.md)_
 
-1. Abra uma issue antes de mudar regra do jogo ou o que o jogador vê. Correção pequena pode ir
-   direto para o PR.
-2. Faça o fork, crie um branch e rode `yarn install --ignore-scripts`.
-3. Toda correção vem com um teste que reprova sem ela. Teste que passa com e sem a mudança
-   não prova nada.
-4. Texto novo entra nos dez `i18n/*.json`, com as mesmas chaves. O `jogo check` reprova se
-   faltar um idioma.
-5. Arquivo novo em `public/` precisa de uma linha no [ASSETS.md](ASSETS.md) com a licença e
-   a origem. Asset sem origem clara não entra.
-6. Rode `yarn verificar` antes de abrir o PR. É o mesmo que o CI roda.
+> **For whom:** anyone who wants to fix or add something to RoqueCraft, maintainers included.
+> **What is here:** the steps from issue to pull request, what must not change, the languages, and the conduct.
+> **Where to go for the rest:** where each piece goes in [docs/EXTENDING.md](docs/EXTENDING.md); the gate in [docs/TESTING.md](docs/TESTING.md).
 
-Não mude os nós e os campos da sala (`meta`, `players/{uid}`, `blocks`, `mobs`, `relogio`,
-`mobilia`, `hits`, `chat`): do outro lado da sala pode estar um RoqueOS com a versão anterior do
-jogo. Nem o formato do save sem migração: o mundo de quem já joga está nele. O RoqueCraft não
-guarda nada no armazenamento do aparelho nem manda evento de métrica; passar a guardar ou a mandar
-é decisão nova, com issue antes.
+Thank you for wanting to help. The bar is the same for everyone, maintainers included.
 
-O código, os comentários e as mensagens de commit são em português do Brasil. Issue e PR em
-inglês são bem-vindos.
+## Steps
 
-## Conduta
+1. Open an issue before changing a game rule or what the player sees. A small fix can go straight
+   to the pull request.
+2. Fork, create a branch and run `yarn install --ignore-scripts`.
+3. Every fix comes with a test that fails without it. A test that passes with and without the
+   change proves nothing.
+4. New text goes into all ten `i18n/*.json`, with the same keys. `jogo check` fails if a language
+   is missing.
+5. A new file in `public/` needs a line in [ASSETS.md](ASSETS.md) with the licence and the origin.
+   An asset without a clear origin does not go in.
+6. Run `yarn verificar` before opening the pull request. It is the same as CI.
 
-Crítica ao código, nunca à pessoa. Assédio, ofensa e exposição de dado pessoal de alguém
-tiram a pessoa do projeto. Para reportar, use o contato de [SECURITY.md](SECURITY.md).
+```bash
+yarn install --ignore-scripts
+yarn verificar
+```
 
----
+## What does not change
 
-## Contributing (English)
+Do not change the room nodes and fields (`meta`, `players/{uid}`, `blocks`, `mobs`, `relogio`,
+`mobilia`, `hits`, `chat`): on the other side of the room there may be a RoqueOS with the previous
+version of the game. Nor the save format without a migration: the world of whoever already plays is
+in it. RoqueCraft stores nothing in the device's storage and sends no metrics events; starting to
+store or to send is a new decision, with an issue first. The full list is in
+[docs/DECISIONS.md](docs/DECISIONS.md).
 
-Open an issue before changing gameplay; fork, branch, `yarn install --ignore-scripts`; every
-fix comes with a test that fails without it; new text goes into all ten `i18n/*.json`; every
-file in `public/` needs a line in `ASSETS.md`; run `yarn verificar` before the pull request.
-Do not change the room nodes and fields, or the save format without a migration; the game stores
-nothing on the device and sends no metrics events. Be kind: critique code, never people.
+## Languages
+
+Code, comments and commit messages are in Brazilian Portuguese. Issues and pull requests in English
+are welcome.
+
+## Conduct
+
+Criticize the code, never the person. Harassment, insults and exposing someone's personal data get
+the person removed from the project. To report, use the contact in [SECURITY.md](SECURITY.md); the
+full code is in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

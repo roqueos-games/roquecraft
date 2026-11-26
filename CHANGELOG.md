@@ -1,5 +1,14 @@
 # Changelog
 
+## Não lançado
+
+- Documentação no padrão da família: `docs/INDEX.md` e os papéis (começar, arquitetura,
+  referência, operação, quando quebra, glossário, estender, integrações, testes, decisões) em
+  inglês em `docs/`, com o par em português em `docs/pt-BR/`, declarados em `docs/docs.json` e
+  conferidos pelo `roqueos-docs`. O `README.md` passa a ser em inglês, com o `README.pt-BR.md`; o
+  `CONTRIBUTING.md` também, com o par em `docs/pt-BR/CONTRIBUTING.md`. A regra 44, os planos e o
+  dev-doc importados do front ficam onde estavam, declarados como histórico. Nada em `src/` mudou.
+
 ## 0.1.4 (25/11/2026): textos sem travessão
 
 - Tira o travessão e a meia-risca do manifesto (`jogo.json`) e das traduções em `i18n/`, por ordem do fundador. Cada frase foi reescrita no próprio idioma com vírgula, dois-pontos, parênteses ou palavra de intervalo, sem mudar o sentido nem os marcadores.
