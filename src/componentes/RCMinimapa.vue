@@ -328,7 +328,7 @@ onBeforeUnmount(() => {
   --rc-mini-borda: rgba(12, 12, 14, 0.75);
   --rc-mini-fundo: rgba(22, 22, 26, 0.82);
   position: absolute;
-  top: calc(var(--ros-space-3, 12px) + env(safe-area-inset-top));
+  top: calc(var(--ros-space-3, 12px) + var(--ros-jogo-safe-top, env(safe-area-inset-top)));
   right: calc(var(--ros-space-3, 12px) + env(safe-area-inset-right));
   pointer-events: auto;
 
@@ -336,8 +336,8 @@ onBeforeUnmount(() => {
   // mapa desce abaixo deles em vez de disputar o mesmo pixel.
   &--mobile {
     top: calc(
-      var(--ros-space-3, 12px) + env(safe-area-inset-top) + var(--rc-toque) +
-        var(--ros-space-2, 8px)
+      var(--ros-space-3, 12px) + var(--ros-jogo-safe-top, env(safe-area-inset-top)) +
+        var(--rc-toque) + var(--ros-space-2, 8px)
     );
   }
 

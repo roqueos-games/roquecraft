@@ -1,7 +1,8 @@
 # Changelog
 
-## Não lançado
+## 0.1.5 (26/11/2026): área segura do topo e documentação
 
+- A HUD, o minimapa, os controles de toque e a tela de início usam `var(--ros-jogo-safe-top, env(safe-area-inset-top))` em vez do `env()` cru. Dentro do RoqueOS a janela já começa abaixo da barra de status e o host publica só a parcela que ainda cobre o palco; somar o inset cru descia tudo uma segunda vez no iPhone. Fora do RoqueOS nada muda. Teste novo: `test/areaSeguraDoTopo.spec.js`.
 - Documentação no padrão da família: `docs/INDEX.md` e os papéis (começar, arquitetura,
   referência, operação, quando quebra, glossário, estender, integrações, testes, decisões) em
   inglês em `docs/`, com o par em português em `docs/pt-BR/`, declarados em `docs/docs.json` e

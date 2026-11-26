@@ -31,7 +31,7 @@
 
   &__top {
     position: absolute;
-    top: calc(var(--ros-space-3, 12px) + env(safe-area-inset-top));
+    top: calc(var(--ros-space-3, 12px) + var(--ros-jogo-safe-top, env(safe-area-inset-top)));
     left: calc(var(--ros-space-3, 12px) + env(safe-area-inset-left));
     display: flex;
     flex-wrap: wrap;
