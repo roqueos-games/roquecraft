@@ -295,7 +295,7 @@ function onEnd() {
   &__top {
     position: absolute;
     right: calc(var(--ros-space-3, 12px) + env(safe-area-inset-right));
-    top: calc(var(--ros-space-3, 12px) + env(safe-area-inset-top));
+    top: calc(var(--ros-space-3, 12px) + var(--ros-jogo-safe-top, env(safe-area-inset-top)));
     display: flex;
     gap: var(--ros-space-2, 8px);
     pointer-events: auto;

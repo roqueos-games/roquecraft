@@ -122,7 +122,7 @@ const saveLabel = computed(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: calc(var(--ros-space-8, 32px) + env(safe-area-inset-top))
+  padding: calc(var(--ros-space-8, 32px) + var(--ros-jogo-safe-top, env(safe-area-inset-top)))
     calc(var(--ros-space-8, 32px) + env(safe-area-inset-left))
     calc(var(--ros-space-8, 32px) + env(safe-area-inset-bottom))
     calc(var(--ros-space-8, 32px) + env(safe-area-inset-right));
