@@ -108,7 +108,7 @@
     "retry": "Erneut versuchen",
     "context": "Die GPU hat das Spiel unterbrochen. Schließe andere 3D-Fenster und versuche es erneut.",
     "quality": "Qualität konnte nicht geändert werden",
-    "saveIndisponivel": "Deine gespeicherte Welt konnte nicht gelesen werden. Sie ist weiterhin vorhanden — das Spiel überschreibt sie nicht. Lade neu, um es erneut zu versuchen."
+    "saveIndisponivel": "Deine gespeicherte Welt konnte nicht gelesen werden. Sie ist weiterhin vorhanden, und das Spiel überschreibt sie nicht. Lade neu, um es erneut zu versuchen."
   },
   "hud": {
     "health": "Leben",

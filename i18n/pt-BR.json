@@ -108,7 +108,7 @@
     "retry": "Tentar de novo",
     "context": "A placa de vídeo interrompeu o jogo. Feche outras janelas 3D e tente de novo.",
     "quality": "Não deu para trocar a qualidade",
-    "saveIndisponivel": "Não deu para ler seu mundo salvo. Ele continua guardado — o jogo não vai gravar por cima. Recarregue para tentar de novo."
+    "saveIndisponivel": "Não deu para ler seu mundo salvo. Ele continua guardado, e o jogo não vai gravar por cima. Recarregue para tentar de novo."
   },
   "hud": {
     "health": "Vida",
