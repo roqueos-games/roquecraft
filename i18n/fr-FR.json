@@ -108,7 +108,7 @@
     "retry": "Réessayer",
     "context": "Le GPU a interrompu le jeu. Fermez les autres fenêtres 3D et réessayez.",
     "quality": "Impossible de changer la qualité",
-    "saveIndisponivel": "Impossible de lire votre monde sauvegardé. Il est toujours là — le jeu ne l'écrasera pas. Rechargez pour réessayer."
+    "saveIndisponivel": "Impossible de lire votre monde sauvegardé. Il est toujours là, et le jeu ne l'écrasera pas. Rechargez pour réessayer."
   },
   "hud": {
     "health": "Santé",

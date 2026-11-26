@@ -9,6 +9,14 @@
   `CONTRIBUTING.md` também, com o par em `docs/pt-BR/CONTRIBUTING.md`. A regra 44, os planos e o
   dev-doc importados do front ficam onde estavam, declarados como histórico. Nada em `src/` mudou.
 
+## 0.1.4 (25/11/2026): textos sem travessão
+
+- Tira o travessão e a meia-risca do manifesto (`jogo.json`) e das traduções em `i18n/`, por ordem do fundador. Cada frase foi reescrita no próprio idioma com vírgula, dois-pontos, parênteses ou palavra de intervalo, sem mudar o sentido nem os marcadores.
+- O RoqueOS copia a descrição do manifesto para o i18n dele: a nova tag precisa ser pinada lá junto com os textos novos.
+- Teste novo (`test/semTravessao.spec.js`) reprova qualquer texto do manifesto ou das traduções que volte a ter um dos dois sinais.
+- Sem mudança de chave, id, evento, sala, save ou código de jogo.
+- Renova as duas réguas datadas que reprovavam o gate desde a 0.1.3 (57 dias, folga de 21): `node qa/bench-mesher.mjs --ledger` gravou uma medição nova em `qa/bench-mesher.json`, e `node qa/qa-sondas.mjs` varreu as 107 sondas (103 verdes, 4 humanas) em `qa/qa-roquecraft-varredura.json`.
+
 ## 0.1.2 (30/09/2026)
 
 Goal 35, Onda 0: a régua antes do conteúdo. O plano inteiro está em

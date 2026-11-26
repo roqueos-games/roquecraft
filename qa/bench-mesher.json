@@ -18,6 +18,25 @@
         1.005
       ],
       "vertices": 6652
+    },
+    {
+      "quando": "2026-11-25T21:57:44.377Z",
+      "commit": "f190f41",
+      "maquina": {
+        "plataforma": "darwin",
+        "arquitetura": "arm64",
+        "cpu": "Apple M5 Max",
+        "node": "v22.23.2"
+      },
+      "msPorSecao": 0.809,
+      "rodadas": [
+        1.002,
+        0.784,
+        0.82,
+        0.805,
+        0.809
+      ],
+      "vertices": 6652
     }
   ]
 }
