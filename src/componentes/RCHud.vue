@@ -32,6 +32,7 @@
       <div
         v-if="armadura > 0"
         class="rc-hud__bar rc-hud__bar--armadura"
+        role="img"
         :aria-label="`${t('roqueCraft.hud.armor')} ${armadura}`"
         data-test="rc-hud-armadura"
       >
@@ -42,7 +43,13 @@
           :class="pipClass(armadura, i)"
         />
       </div>
-      <div class="rc-hud__bar rc-hud__bar--health" :aria-label="t('roqueCraft.hud.health')">
+      <!-- `role="img"`: o nome (`aria-label`) só vale num elemento com papel; o axe reprovava
+           a barra sem ele (aria-prohibited-attr, 27/11/2026). -->
+      <div
+        class="rc-hud__bar rc-hud__bar--health"
+        role="img"
+        :aria-label="t('roqueCraft.hud.health')"
+      >
         <span
           v-for="i in 10"
           :key="`h${i}`"
@@ -50,7 +57,11 @@
           :class="pipClass(health, i)"
         />
       </div>
-      <div class="rc-hud__bar rc-hud__bar--hunger" :aria-label="t('roqueCraft.hud.hunger')">
+      <div
+        class="rc-hud__bar rc-hud__bar--hunger"
+        role="img"
+        :aria-label="t('roqueCraft.hud.hunger')"
+      >
         <span
           v-for="i in 10"
           :key="`f${i}`"
@@ -61,6 +72,7 @@
       <div
         v-if="air < 300"
         class="rc-hud__bar rc-hud__bar--air"
+        role="img"
         :aria-label="t('roqueCraft.hud.air')"
       >
         <span
@@ -86,7 +98,7 @@
         class="rc-hud__slot"
         :class="{ 'is-selected': i === selected }"
         :title="slot ? nomeDaPilha(slot, t) : ''"
-        :aria-label="slot ? nomeDaPilha(slot, t) : t('roqueCraft.hud.emptySlot')"
+        :aria-label="nomeDoSlot(slot, i)"
         @click="$emit('select', i)"
         @touchstart.prevent="segurarSlot(i)"
         @touchmove="cancelarSlot"
@@ -113,11 +125,16 @@
           class="rc-hud__slot-splash"
           aria-hidden="true"
         />
-        <span v-if="slot && slot.count > 1" class="rc-hud__slot-count">{{ slot.count }}</span>
+        <!-- O número da tecla e a contagem vão no nome do botão (`nomeDoSlot`), e os dois
+             textos visíveis ficam fora da árvore: senão o nome falado não contém o texto que
+             se vê, na ordem em que se vê (label-content-name-mismatch, 27/11/2026). -->
+        <span v-if="slot && slot.count > 1" class="rc-hud__slot-count" aria-hidden="true">{{
+          slot.count
+        }}</span>
         <span v-if="slot && slot.dur != null" class="rc-hud__slot-dur">
           <i :style="{ width: durPct(slot) }" />
         </span>
-        <span class="rc-hud__slot-key">{{ i + 1 }}</span>
+        <span class="rc-hud__slot-key" aria-hidden="true">{{ i + 1 }}</span>
       </button>
     </div>
 
@@ -228,6 +245,16 @@ const pipClass = (value, i) => {
 }
 
 const iconFor = (key) => props.icons[key] || null
+/**
+ * O nome falado de cada casa da hotbar: a tecla, o item (ou "vazio") e a quantidade.
+ * "3: Pedra, 64". Leva o que se vê na casa, na mesma ordem lógica, para o leitor de tela
+ * e para o axe (label-content-name-mismatch), e os números visíveis ficam `aria-hidden`.
+ */
+const nomeDoSlot = (slot, i) => {
+  const nome = slot ? nomeDaPilha(slot, t) : t('roqueCraft.hud.emptySlot')
+  const conta = slot && slot.count > 1 ? `, ${slot.count}` : ''
+  return `${i + 1}: ${nome}${conta}`
+}
 const durPct = (slot) => {
   const def = itemDef(slot.item)
   if (!def?.durability) return '100%'
