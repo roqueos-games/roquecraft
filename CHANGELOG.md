@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6 (27/11/2026): HUD acessível
+
+- As barras de vida, fome, armadura e ar têm `role="img"`: o nome delas (`aria-label`) não valia num `div` sem papel, e o axe reprovava (aria-prohibited-attr).
+- Cada casa da hotbar diz a tecla, o item e a quantidade ("3: Pedra, 64"), e os números visíveis ficam `aria-hidden`: o nome falado não continha o texto que se via (label-content-name-mismatch). Teste em `test/componentes/RCHud.spec.js`.
+
 ## 0.1.5 (26/11/2026): área segura do topo e documentação
 
 - A HUD, o minimapa, os controles de toque e a tela de início usam `var(--ros-jogo-safe-top, env(safe-area-inset-top))` em vez do `env()` cru. Dentro do RoqueOS a janela já começa abaixo da barra de status e o host publica só a parcela que ainda cobre o palco; somar o inset cru descia tudo uma segunda vez no iPhone. Fora do RoqueOS nada muda. Teste novo: `test/areaSeguraDoTopo.spec.js`.

@@ -133,4 +133,28 @@ describe('RCHud', () => {
     expect(rotulos[1]).toMatch(/roqueCraft\.pocao\.longa|longa/)
     expect(rotulos[2]).not.toMatch(/II|longa|splash/)
   })
+
+  // O axe reprovava o HUD (27/11/2026): `aria-label` em barra sem papel e casas da hotbar cujo
+  // nome falado não continha o número da tecla nem a quantidade que se veem.
+  it('cada casa diz a tecla, o item e a quantidade; os números visíveis ficam fora da árvore', () => {
+    const w = montar()
+    const casas = w.findAll('.rc-hud__slot')
+    expect(casas.map((c) => c.attributes('aria-label'))).toEqual([
+      '1: item.stone, 3',
+      '2: roqueCraft.hud.emptySlot',
+      '3: item.dirt',
+    ])
+    expect(
+      ['.rc-hud__slot-key', '.rc-hud__slot-count'].map((c) =>
+        casas[0].find(c).attributes('aria-hidden'),
+      ),
+    ).toEqual(['true', 'true'])
+  })
+
+  it('as barras de vida e fome são imagens com nome', () => {
+    const w = montar()
+    expect(
+      ['--health', '--hunger'].map((b) => w.find(`.rc-hud__bar${b}`).attributes('role')),
+    ).toEqual(['img', 'img'])
+  })
 })
